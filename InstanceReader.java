@@ -31,7 +31,7 @@ public class InstanceReader extends JFrame {
             }
          }
          catch(Exception e){
-
+            e.printStackTrace();
          }
       }
 
