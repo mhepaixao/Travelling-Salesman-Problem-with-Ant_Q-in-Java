@@ -1,24 +1,48 @@
-import java.util.ArrayList;
-
 public class Agent {
-   private ArrayList<City> citiesToVisit;
+   private City citiesToVisit[];
    private City currentCity;
 
    public Agent(ArrayList<City> cities){
-      this.citiesToVisit = new ArrayList<City>();
+      this.citiesToVisit = new City[cities.size()];
 
       for(int i = 0; i <= cities.size() - 1; i++){
-         this.citiesToVisit.add(cities.get(i));
+         this.citiesToVisit[i] = cities.get(i);
       }
    }
 
-   public ArrayList<City> getCitiesToVisit(){
-      return this.citiesToVisit;
-   }
+   //public City[] getCitiesToVisit(){
+      //return this.citiesToVisit;
+   //}
 
    public void setCurrentCity(City currentCity){
-      this.currentCity = currentCity;
-      citiesToVisit.remove(getCurrentCity());
+      this.currentCity = getCorrespondentCity(currentCity);
+      citiesToVisit[getCurrentCityIndex()] = null;
+   }
+
+   private City getCorrespondentCity(City city){
+      City correspondentCity = null;
+
+      for(int i = 0; i <= citiesToVisit.length - 1; i++){
+         if(city.equals(citiesToVisit[i])){
+            correspondentCity = citiesToVisit[i];
+            break;
+         }
+      }
+
+      return correspondentCity;
+   }
+
+   public int getCurrentCityIndex(){
+      int index = citiesToVisit.length + 1;
+
+      for(int i = 0; i <= citiesToVisit.length - 1; i++){
+         if(getCurrentCity().equals(citiesToVisit[i])){
+            index = i;
+            break;
+         }
+      }
+
+      return index;
    }
    
    public City getCurrentCity(){
