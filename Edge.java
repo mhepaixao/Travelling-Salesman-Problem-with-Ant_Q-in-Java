@@ -1,10 +1,16 @@
 public class Edge {
    private City city1;
    private City city2;
+   private double edgeValue;
+   private double AQValue;
 
    public Edge(City city1, City city2){
       this.city1 = city1;
       this.city2 = city2;
+
+      edgeValue = calculateEdgeValue(city1, city2);
+
+      this.AQValue = 0;
    }
 
    public City getCity1(){
@@ -13,6 +19,14 @@ public class Edge {
 
    public City getCity2(){
       return this.city2;
+   }
+
+   public double getEdgeValue(){
+      return this.edgeValue;
+   }
+
+   public void setAQValue(double AQValue){
+      this.AQValue = AQValue;
    }
 
    public boolean equals(Edge edge){
@@ -29,10 +43,7 @@ public class Edge {
       return result;
    }
 
-   public double getEdgeValue(){
-      City city1 = this.getCity1();
-      City city2 = this.getCity2();
-
+   private double calculateEdgeValue(City city1, City city2){
       return Math.sqrt(Math.pow(city1.getX() - city2.getX(), 2) + 
             Math.pow(city1.getY() - city2.getY(), 2));
    }
