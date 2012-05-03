@@ -15,6 +15,18 @@ public class City {
       return this.y;
    }
 
+   public boolean equals(City city){
+      boolean result = false;
+
+      if(city instanceof City){
+         if((city.getX() == this.getX()) && (city.getY() == this.getY())){
+            result = true;
+         }
+      }
+
+      return result;
+   }
+
    public String toString(){
       return "(" + getX() + " " + getY() + ")";
    }
