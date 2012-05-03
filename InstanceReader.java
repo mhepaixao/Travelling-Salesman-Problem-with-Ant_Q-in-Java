@@ -8,8 +8,11 @@ import java.io.BufferedReader;
 import java.util.ArrayList;
 
 public class InstanceReader extends JFrame {
-   public ArrayList<City> getCitiesList(){
-      ArrayList<City> cities = new ArrayList<City>();
+   public City[] getCitiesList(){
+      City[] cities = null;
+      Object[] temporaryCities = null;
+      ArrayList<City> dynamicListOfCities = new ArrayList<City>();
+
       File instance = getInstance();
 
       if(instance != null){
@@ -27,12 +30,19 @@ public class InstanceReader extends JFrame {
                y = Double.parseDouble(instanceLine.split(" ")[1]);
                city = new City(x, y);
 
-               cities.add(city);
+               dynamicListOfCities.add(city);
             }
          }
          catch(Exception e){
             e.printStackTrace();
          }
+
+      }
+      
+      temporaryCities = dynamicListOfCities.toArray();
+      cities = new City[temporaryCities.length];
+      for(int i = 0; i <= cities.length - 1; i++){
+         cities[i] = (City) temporaryCities[i];
       }
 
       return cities;

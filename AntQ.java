@@ -1,12 +1,11 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class AntQ {
-   private static ArrayList<City> cities;
+   private static City[] cities;
 
    private static Edge edges[][];
 
-   private static ArrayList<Agent> agents;
+   private static Agent[] agents;
 
    public static void main(String[] args){
       init();
@@ -23,11 +22,11 @@ public class AntQ {
    }
 
    private static void createEdges(){
-      edges = new Edge[cities.size()][cities.size()];
+      edges = new Edge[cities.length][cities.length];
 
-      for(int i = 0; i <= cities.size() - 1; i++){
-         for(int j = 0; j <= cities.size() - 1; j++){
-            edges[i][j] = new Edge(cities.get(i), cities.get(j));
+      for(int i = 0; i <= cities.length - 1; i++){
+         for(int j = 0; j <= cities.length - 1; j++){
+            edges[i][j] = new Edge(cities[i], cities[j]);
          }
       }
    }
@@ -43,7 +42,7 @@ public class AntQ {
       }
       averageValueOfEdges = sumOfEdges / edges.length;
       
-      return 1 / (averageValueOfEdges * cities.size());
+      return 1 / (averageValueOfEdges * cities.length);
    }
 
    private static void initAQValues(double AQ0){
@@ -55,11 +54,11 @@ public class AntQ {
    }
 
    private static void initAgents(){
-      agents = new ArrayList<Agent>(); 
+      agents = new Agent[cities.length]; 
 
-      for(int i = 0; i <= cities.size() - 1; i++){
-         agents.add(new Agent(cities));
-         agents.get(i).setCurrentCity(cities.get(i));
+      for(int i = 0; i <= agents.length - 1; i++){
+         agents[i] = new Agent(cities);
+         agents[i].setCurrentCity(cities[i]);
       }
    }
 }

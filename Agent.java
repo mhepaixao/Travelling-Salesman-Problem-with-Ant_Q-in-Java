@@ -2,11 +2,11 @@ public class Agent {
    private City citiesToVisit[];
    private City currentCity;
 
-   public Agent(ArrayList<City> cities){
-      this.citiesToVisit = new City[cities.size()];
+   public Agent(City[] cities){
+      this.citiesToVisit = new City[cities.length];
 
-      for(int i = 0; i <= cities.size() - 1; i++){
-         this.citiesToVisit[i] = cities.get(i);
+      for(int i = 0; i <= cities.length - 1; i++){
+         this.citiesToVisit[i] = cities[i];
       }
    }
 
