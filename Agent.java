@@ -10,6 +10,10 @@ public class Agent {
       }
    }
 
+   public City getCurrentCity(){
+      return this.currentCity;
+   }
+
    //public City[] getCitiesToVisit(){
       //return this.citiesToVisit;
    //}
@@ -44,8 +48,8 @@ public class Agent {
 
       return index;
    }
-   
-   public City getCurrentCity(){
-      return this.currentCity;
+
+   public void chooseNextCity(){
+
    }
 }

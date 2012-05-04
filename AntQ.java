@@ -1,6 +1,14 @@
 import java.util.ArrayList;
 
 public class AntQ {
+   //CONSTANTS
+   public static final double delta = 1;
+   public static final double beta = 2;
+   public static final double alfa = 0.1;
+   public static final double gamma = 0.3;
+   public static final double q0 = 0.9;
+   public static final int w = 10;
+
    private static City[] cities;
 
    private static Edge edges[][];
@@ -8,7 +16,29 @@ public class AntQ {
    private static Agent[] agents;
 
    public static void main(String[] args){
+      int totalIterations = 0;
+      int iterationsCounter = 0;
+
+      if(args.length > 0){
+         totalIterations = Integer.parseInt(args[0]);
+      }
+      else{
+         totalIterations = 15;
+      }
+
       init();
+
+      while(iterationsCounter <= totalIterations){
+         for(int i = 0; i <= cities.length - 1; i++){
+            if(i != cities.length - 1){
+               for(int j = 0; j <= agents.length - 1; j++){
+                  agents[j].chooseNextCity();
+               }
+            }
+         }
+
+         iterationsCounter++;
+      }
    }
 
    private static void init(){
