@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Agent {
    private City citiesToVisit[];
    private City currentCity;
@@ -50,6 +52,18 @@ public class Agent {
    }
 
    public void chooseNextCity(){
+      double q = getRandomNumber();
 
+      if(q <= AntQ.q0){
+
+      }
+      else{
+
+      }
+   }
+
+   private double getRandomNumber(){
+      Random random = new Random();
+      return random.nextDouble();
    }
 }
