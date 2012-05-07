@@ -84,7 +84,8 @@ public class AntQ {
    }
 
    private static void initAgents(){
-      agents = new Agent[cities.length]; 
+      //agents = new Agent[cities.length]; 
+      agents = new Agent[1]; 
 
       for(int i = 0; i <= agents.length - 1; i++){
          agents[i] = new Agent(cities);
@@ -94,5 +95,17 @@ public class AntQ {
 
    public static double getQ0(){
       return q0;
+   }
+
+   public static Edge[][] getEdges(){
+      return edges;
+   }
+
+   public static double getGamma(){
+      return gamma;
+   }
+
+   public static double getBeta(){
+      return beta;
    }
 }
