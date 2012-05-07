@@ -54,7 +54,7 @@ public class Agent {
    public void chooseNextCity(){
       double q = getRandomNumber();
 
-      if(q <= AntQ.q0){
+      if(q <= AntQ.getQ0()){
 
       }
       else{

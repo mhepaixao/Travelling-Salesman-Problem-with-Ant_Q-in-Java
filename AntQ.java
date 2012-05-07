@@ -2,12 +2,12 @@ import java.util.ArrayList;
 
 public class AntQ {
    //CONSTANTS
-   public static final double delta = 1;
-   public static final double beta = 2;
-   public static final double alfa = 0.1;
-   public static final double gamma = 0.3;
-   public static final double q0 = 0.9;
-   public static final int w = 10;
+   private static final double delta = 1;
+   private static final double beta = 2;
+   private static final double alfa = 0.1;
+   private static final double gamma = 0.3;
+   private static final double q0 = 0.9;
+   private static final int w = 10;
 
    private static City[] cities;
 
@@ -90,5 +90,9 @@ public class AntQ {
          agents[i] = new Agent(cities);
          agents[i].setCurrentCity(cities[i]);
       }
+   }
+
+   public static double getQ0(){
+      return q0;
    }
 }
