@@ -32,7 +32,12 @@ public class AntQ {
          for(int i = 0; i <= cities.length - 1; i++){
             if(i != cities.length - 1){
                for(int j = 0; j <= agents.length - 1; j++){
-                  agents[j].chooseNextCity();
+                  agents[j].moveToNextCity();
+               }
+            }
+            else{
+               for(int j = 0; j <= agents.length - 1; j++){
+                  agents[j].backToInitialCity();
                }
             }
          }
@@ -88,13 +93,16 @@ public class AntQ {
       agents = new Agent[1]; 
 
       for(int i = 0; i <= agents.length - 1; i++){
-         agents[i] = new Agent(cities);
-         agents[i].setCurrentCity(cities[i]);
+         agents[i] = new Agent(cities[i]);
       }
    }
 
    public static double getQ0(){
       return q0;
+   }
+
+   public static City[] getCities(){
+      return cities;
    }
 
    public static Edge[][] getEdges(){

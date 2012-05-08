@@ -1,16 +1,25 @@
 import java.util.Random;
 
 public class Agent {
+   private City initialCity;
    private City citiesToVisit[];
    private City currentCity;
    private int currentCityIndex;
+   private Edge tour[];
 
-   public Agent(City[] cities){
-      this.citiesToVisit = new City[cities.length];
+   public Agent(City initialCity){
+      this.citiesToVisit = new City[AntQ.getCities().length];
 
-      for(int i = 0; i <= cities.length - 1; i++){
-         this.citiesToVisit[i] = cities[i];
-      }
+      loadCitiesToVisit();
+
+      this.initialCity = initialCity;
+      setCurrentCity(this.initialCity);
+
+      tour = new Edge[this.citiesToVisit.length];
+   }
+
+   private City getInitialCity(){
+      return this.initialCity;
    }
 
    public City getCurrentCity(){
@@ -25,10 +34,44 @@ public class Agent {
       //return this.citiesToVisit;
    //}
 
+   public void backToInitialCity(){
+      City initialCity = getInitialCity();
+      
+      loadCitiesToVisit();
+      addCityToTour(initialCity);
+
+      setCurrentCity(initialCity);
+   }
+
+   private void loadCitiesToVisit(){
+      City cities[] = AntQ.getCities();
+
+      for(int i = 0; i <= cities.length - 1; i++){
+         this.citiesToVisit[i] = cities[i];
+      }
+   }
+
    public void setCurrentCity(City currentCity){
       this.currentCity = getCorrespondentCity(currentCity);
       this.currentCityIndex = getCityIndex(getCurrentCity());
       citiesToVisit[getCurrentCityIndex()] = null;
+   }
+
+   private void addCityToTour(City city){
+      Edge[][] edges = AntQ.getEdges();
+      int currentCityIndex = getCurrentCityIndex();
+      int cityIndex = getCityIndex(city);
+
+      insertEdge(edges[currentCityIndex][cityIndex]);
+   }
+   
+   private void insertEdge(Edge edge){
+      for(int i = 0; i <= tour.length - 1; i++){
+         if(tour[i] == null){
+            tour[i] = edge;
+            break;
+         }
+      }
    }
 
    private City getCorrespondentCity(City city){
@@ -57,15 +100,19 @@ public class Agent {
       return index;
    }
 
-   public void chooseNextCity(){
+   public void moveToNextCity(){
       double q = getRandomNumber();
+      City nextCity = null;
 
       if(q <= AntQ.getQ0()){
-         setCurrentCity(getMaxActionChoiceCity());
+         nextCity = getMaxActionChoiceCity();
       }
       else{
-         setCurrentCity(getPseudoRandomProportionalCity());
+         nextCity = getPseudoRandomProportionalCity();
       }
+
+      addCityToTour(nextCity);
+      setCurrentCity(nextCity);
    }
 
    private double getRandomNumber(){

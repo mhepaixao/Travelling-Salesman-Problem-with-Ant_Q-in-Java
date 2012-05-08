@@ -61,4 +61,8 @@ public class Edge {
    private double calculateEdgeHeuristicValue(){
       return 1 / edgeValue;
    }
+
+   public String toString(){
+      return getCity1().toString() + " " + getCity2().toString();
+   }
 }
