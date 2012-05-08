@@ -4,7 +4,6 @@ public class Agent {
    private City initialCity;
    private City citiesToVisit[];
    private City currentCity;
-   private int currentCityIndex;
    private Edge tour[];
 
    public Agent(City initialCity){
@@ -26,14 +25,6 @@ public class Agent {
       return this.currentCity;
    }
 
-   private int getCurrentCityIndex(){
-      return this.currentCityIndex;
-   }
-
-   //public City[] getCitiesToVisit(){
-      //return this.citiesToVisit;
-   //}
-
    public void backToInitialCity(){
       City initialCity = getInitialCity();
       
@@ -53,13 +44,12 @@ public class Agent {
 
    public void setCurrentCity(City currentCity){
       this.currentCity = getCorrespondentCity(currentCity);
-      this.currentCityIndex = getCityIndex(getCurrentCity());
-      citiesToVisit[getCurrentCityIndex()] = null;
+      citiesToVisit[getCityIndex(getCurrentCity())] = null;
    }
 
    private void addCityToTour(City city){
       Edge[][] edges = AntQ.getEdges();
-      int currentCityIndex = getCurrentCityIndex();
+      int currentCityIndex = getCityIndex(getCurrentCity());
       int cityIndex = getCityIndex(city);
 
       insertEdge(edges[currentCityIndex][cityIndex]);
@@ -88,10 +78,11 @@ public class Agent {
    }
 
    private int getCityIndex(City city){
-      int index = citiesToVisit.length + 1;
+      City[] cities = AntQ.getCities();
+      int index = cities.length + 1;
 
-      for(int i = 0; i <= citiesToVisit.length - 1; i++){
-         if(city.equals(citiesToVisit[i])){
+      for(int i = 0; i <= cities.length - 1; i++){
+         if(city.equals(cities[i])){
             index = i;
             break;
          }
@@ -183,7 +174,7 @@ public class Agent {
 
    private double getActionChoice(City city){
       Edge edges[][] = AntQ.getEdges();
-      Edge edge = edges[getCurrentCityIndex()][getCityIndex(city)];
+      Edge edge = edges[getCityIndex(getCurrentCity())][getCityIndex(city)];
       double edgeAQValue = edge.getAQValue();
       double edgeHeuristcValue = edge.getEdgeHeuristicValue();
 
