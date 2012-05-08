@@ -64,7 +64,7 @@ public class Agent {
          setCurrentCity(getMaxActionChoiceCity());
       }
       else{
-
+         setCurrentCity(getPseudoRandomProportionalCity());
       }
    }
 
@@ -89,6 +89,26 @@ public class Agent {
       return maxActionChoiceCity;
    }
 
+   private City getPseudoRandomProportionalCity(){
+      City maxProbabilityCity = getFirstCityToVisit();
+      City city = null;
+
+      for(int i = 0; i <= citiesToVisit.length - 1; i++){
+         if(citiesToVisit[i] != null){
+            city = citiesToVisit[i];
+            if(getProbability(city) > getProbability(maxProbabilityCity)){
+               maxProbabilityCity = city;
+            }
+         }
+      }
+
+      return maxProbabilityCity;
+   }
+
+   private double getProbability(City city){
+      return getActionChoice(city) / getActionChoiceSum();
+   }
+
    private City getFirstCityToVisit(){
       City firstCityToVisit = null;
 
@@ -100,6 +120,18 @@ public class Agent {
       }
 
       return firstCityToVisit;
+   }
+
+   private double getActionChoiceSum(){
+      double actionChoiceSum = 0;
+
+      for(int i = 0; i <= citiesToVisit.length - 1; i++){
+         if(citiesToVisit[i] != null){
+            actionChoiceSum += getActionChoice(citiesToVisit[i]);
+         }
+      }
+
+      return actionChoiceSum;
    }
 
    private double getActionChoice(City city){

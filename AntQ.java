@@ -23,7 +23,7 @@ public class AntQ {
          totalIterations = Integer.parseInt(args[0]);
       }
       else{
-         totalIterations = 15;
+         totalIterations = 14;
       }
 
       init();
