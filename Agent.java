@@ -70,6 +70,19 @@ public class Agent {
       }
    }
 
+   public Edge getLastTourEdge(){
+      Edge lastTourEdge = null;
+
+      for(int i = 0; i <= tour.length - 1; i++){
+         if(tour[i] != null){
+            lastTourEdge = tour[i];
+            break;
+         }
+      }
+
+      return lastTourEdge;
+   }
+
    private City getCorrespondentCity(City city){
       City correspondentCity = null;
 
@@ -170,5 +183,11 @@ public class Agent {
       double edgeHeuristcValue = edge.getEdgeHeuristicValue();
 
       return Math.pow(edgeAQValue, AntQ.getGamma()) * Math.pow(edgeHeuristcValue, AntQ.getBeta());
+   }
+
+   public double getMaxAQValue(City nextCity){
+      double maxAQValue = 0;
+
+      return maxAQValue;
    }
 }

@@ -46,6 +46,8 @@ public class AntQ {
             }
 
             for(int j = 0; j <= agents.length - 1; j++){
+               updateAQValue(agents[j].getLastTourEdge(), 0, agents[j].getMaxAQValue(nextCity));
+
                if(i == cities.length - 1){
                   agents[j].loadCitiesToVisit();
                   agents[j].clearTour();
@@ -122,6 +124,10 @@ public class AntQ {
       }
 
       return index;
+   }
+
+   private static void updateAQValue(Edge edge, double reinforcementLearningValue, double maxAQValue){
+
    }
 
    public static double getQ0(){
