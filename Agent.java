@@ -19,7 +19,7 @@ public class Agent {
       tour = new Edge[this.citiesToVisit.length];
    }
 
-   private City getInitialCity(){
+   public City getInitialCity(){
       return this.initialCity;
    }
 
@@ -27,17 +27,7 @@ public class Agent {
       return this.currentCity;
    }
 
-   public void backToInitialCity(){
-      City initialCity = getInitialCity();
-      
-      loadCitiesToVisit();
-      addCityToTour(initialCity);
-
-      setCurrentCity(initialCity);
-      removeCityFromCitiesToVisit(initialCity);
-   }
-
-   private void loadCitiesToVisit(){
+   public void loadCitiesToVisit(){
       City cities[] = AntQ.getCities();
 
       for(int i = 0; i <= cities.length - 1; i++){
@@ -57,7 +47,7 @@ public class Agent {
       citiesToVisit[AntQ.getCityIndex(city)] = city;
    }
 
-   private void addCityToTour(City city){
+   public void addCityToTour(City city){
       Edge[][] edges = AntQ.getEdges();
       int currentCityIndex = AntQ.getCityIndex(getCurrentCity());
       int cityIndex = AntQ.getCityIndex(city);
@@ -87,7 +77,7 @@ public class Agent {
       return correspondentCity;
    }
 
-   public void moveToNextCity(){
+   public City getNextCity(){
       double q = getRandomNumber();
       City nextCity = null;
 
@@ -98,9 +88,7 @@ public class Agent {
          nextCity = getPseudoRandomProportionalCity();
       }
 
-      addCityToTour(nextCity);
-      setCurrentCity(nextCity);
-      removeCityFromCitiesToVisit(nextCity);
+      return nextCity;
    }
 
    private double getRandomNumber(){
