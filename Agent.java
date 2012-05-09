@@ -27,6 +27,10 @@ public class Agent {
       return this.currentCity;
    }
 
+   public City[] getCitiesToVisit(){
+      return this.citiesToVisit;
+   }
+
    public void loadCitiesToVisit(){
       City cities[] = AntQ.getCities();
 
@@ -73,7 +77,7 @@ public class Agent {
    public Edge getLastTourEdge(){
       Edge lastTourEdge = null;
 
-      for(int i = 0; i <= tour.length - 1; i++){
+      for(int i = tour.length - 1; i >= 0; i--){
          if(tour[i] != null){
             lastTourEdge = tour[i];
             break;
@@ -183,11 +187,5 @@ public class Agent {
       double edgeHeuristcValue = edge.getEdgeHeuristicValue();
 
       return Math.pow(edgeAQValue, AntQ.getGamma()) * Math.pow(edgeHeuristcValue, AntQ.getBeta());
-   }
-
-   public double getMaxAQValue(City nextCity){
-      double maxAQValue = 0;
-
-      return maxAQValue;
    }
 }

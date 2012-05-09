@@ -46,7 +46,7 @@ public class AntQ {
             }
 
             for(int j = 0; j <= agents.length - 1; j++){
-               updateAQValue(agents[j].getLastTourEdge(), 0, agents[j].getMaxAQValue(nextCity));
+               updateAQValue(agents[j].getLastTourEdge(), 0, getMaxAQValue(agents[j], nextCity));
 
                if(i == cities.length - 1){
                   agents[j].loadCitiesToVisit();
@@ -127,7 +127,34 @@ public class AntQ {
    }
 
    private static void updateAQValue(Edge edge, double reinforcementLearningValue, double maxAQValue){
+      int city1Index = getCityIndex(edge.getCity1());
+      int city2Index = getCityIndex(edge.getCity2());
+      
+      //System.out.println("AQ value before update: " + edges[city1Index][city2Index].getAQValue());
 
+      //edges[city1Index][city2Index].setAQValue((1 - alfa) * edges[city1Index][city2Index].getAQValue() +
+                                                //alfa * (reinforcementLearningValue + gamma * maxAQValue));
+
+      //System.out.println("AQ value after update: " + edges[city1Index][city2Index].getAQValue());
+      System.out.println("====================================================");
+   }
+
+   public static double getMaxAQValue(Agent agent, City nextCity){
+      double maxAQValue = 0;
+      double edgeAQValue = 0;
+      int nextCityIndex = getCityIndex(nextCity);
+      City[] citiesToVisit = agent.getCitiesToVisit();
+
+      for(int i = 0; i <= citiesToVisit.length - 1; i++){
+         if(citiesToVisit[i] != null){
+            edgeAQValue = edges[nextCityIndex][getCityIndex(citiesToVisit[i])].getAQValue();
+            if(edgeAQValue > maxAQValue){
+               maxAQValue = edgeAQValue;
+            }
+         }
+      }
+
+      return maxAQValue;
    }
 
    public static double getQ0(){
