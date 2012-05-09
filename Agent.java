@@ -64,6 +64,12 @@ public class Agent {
       }
    }
 
+   public void clearTour(){
+      for(int i = 0; i <= tour.length - 1; i ++){
+         tour[i] = null;
+      }
+   }
+
    private City getCorrespondentCity(City city){
       City correspondentCity = null;
 

@@ -36,24 +36,26 @@ public class AntQ {
                for(int j = 0; j <= agents.length - 1; j++){
                   nextCity = agents[j].getNextCity();
                   agents[j].addCityToTour(nextCity);
-                  agents[j].setCurrentCity(nextCity);
-                  agents[j].removeCityFromCitiesToVisit(nextCity);
                }
             }
             else{
                for(int j = 0; j <= agents.length - 1; j++){
                   nextCity = agents[j].getInitialCity();
-                  agents[j].loadCitiesToVisit();
                   agents[j].addCityToTour(nextCity);
-                  agents[j].setCurrentCity(nextCity);
-                  agents[j].removeCityFromCitiesToVisit(nextCity);
                }
             }
-         }
-         for(int j = 0; j <= agents[0].tour.length - 1; j++){
-            System.out.println(agents[0].tour[j]);
+
+            for(int j = 0; j <= agents.length - 1; j++){
+               if(i == cities.length - 1){
+                  agents[j].loadCitiesToVisit();
+                  agents[j].clearTour();
+               }
+               agents[j].setCurrentCity(nextCity);
+               agents[j].removeCityFromCitiesToVisit(nextCity);
+            }
          }
 
+         System.out.println("===========================================");
          iterationsCounter++;
       }
    }
