@@ -4,7 +4,8 @@ public class Agent {
    private City initialCity;
    private City citiesToVisit[];
    private City currentCity;
-   private Edge tour[];
+   //private Edge tour[];
+   public Edge tour[];
 
    public Agent(City initialCity){
       this.citiesToVisit = new City[AntQ.getCities().length];
@@ -44,13 +45,13 @@ public class Agent {
 
    public void setCurrentCity(City currentCity){
       this.currentCity = getCorrespondentCity(currentCity);
-      citiesToVisit[getCityIndex(getCurrentCity())] = null;
+      citiesToVisit[AntQ.getCityIndex(getCurrentCity())] = null;
    }
 
    private void addCityToTour(City city){
       Edge[][] edges = AntQ.getEdges();
-      int currentCityIndex = getCityIndex(getCurrentCity());
-      int cityIndex = getCityIndex(city);
+      int currentCityIndex = AntQ.getCityIndex(getCurrentCity());
+      int cityIndex = AntQ.getCityIndex(city);
 
       insertEdge(edges[currentCityIndex][cityIndex]);
    }
@@ -75,20 +76,6 @@ public class Agent {
       }
 
       return correspondentCity;
-   }
-
-   private int getCityIndex(City city){
-      City[] cities = AntQ.getCities();
-      int index = cities.length + 1;
-
-      for(int i = 0; i <= cities.length - 1; i++){
-         if(city.equals(cities[i])){
-            index = i;
-            break;
-         }
-      }
-
-      return index;
    }
 
    public void moveToNextCity(){
@@ -174,7 +161,7 @@ public class Agent {
 
    private double getActionChoice(City city){
       Edge edges[][] = AntQ.getEdges();
-      Edge edge = edges[getCityIndex(getCurrentCity())][getCityIndex(city)];
+      Edge edge = edges[AntQ.getCityIndex(getCurrentCity())][AntQ.getCityIndex(city)];
       double edgeAQValue = edge.getAQValue();
       double edgeHeuristcValue = edge.getEdgeHeuristicValue();
 

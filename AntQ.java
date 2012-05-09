@@ -41,6 +41,9 @@ public class AntQ {
                }
             }
          }
+         for(int j = 0; j <= agents[0].tour.length - 1; j++){
+            System.out.println(agents[0].tour[j]);
+         }
 
          iterationsCounter++;
       }
@@ -95,6 +98,19 @@ public class AntQ {
       for(int i = 0; i <= agents.length - 1; i++){
          agents[i] = new Agent(cities[i]);
       }
+   }
+
+   public static int getCityIndex(City city){
+      int index = cities.length + 1;
+
+      for(int i = 0; i <= cities.length - 1; i++){
+         if(city.equals(cities[i])){
+            index = i;
+            break;
+         }
+      }
+
+      return index;
    }
 
    public static double getQ0(){
