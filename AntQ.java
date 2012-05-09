@@ -36,6 +36,9 @@ public class AntQ {
                for(int j = 0; j <= agents.length - 1; j++){
                   nextCity = agents[j].getNextCity();
                   agents[j].addCityToTour(nextCity);
+                  if(i == cities.length - 2){
+                     agents[j].addInitialCityToCitiesToVisit();
+                  }
                }
             }
             else{
@@ -99,7 +102,12 @@ public class AntQ {
    private static void initAQValues(double AQ0){
       for(int i = 0; i <= edges.length - 1; i++){
          for(int j = 0; j <= edges.length - 1; j++){
-            edges[i][j].setAQValue(AQ0);
+            if(i == j){
+               edges[i][j].setAQValue(0);
+            }
+            else{
+               edges[i][j].setAQValue(AQ0);
+            }
          }
       }
    }
@@ -130,16 +138,19 @@ public class AntQ {
       int city1Index = getCityIndex(edge.getCity1());
       int city2Index = getCityIndex(edge.getCity2());
       
-      //System.out.println("AQ value before update: " + edges[city1Index][city2Index].getAQValue());
+      System.out.println("edge to update: "+edge);
+      System.out.println("max AQ value: "+maxAQValue);
+      System.out.println("AQ value before update: " + edges[city1Index][city2Index].getAQValue());
 
-      //edges[city1Index][city2Index].setAQValue((1 - alfa) * edges[city1Index][city2Index].getAQValue() +
-                                                //alfa * (reinforcementLearningValue + gamma * maxAQValue));
+      edges[city1Index][city2Index].setAQValue((1 - alfa) * edges[city1Index][city2Index].getAQValue() +
+                                                alfa * (reinforcementLearningValue + gamma * maxAQValue));
 
-      //System.out.println("AQ value after update: " + edges[city1Index][city2Index].getAQValue());
+      System.out.println("AQ value after update: " + edges[city1Index][city2Index].getAQValue());
       System.out.println("====================================================");
    }
 
    public static double getMaxAQValue(Agent agent, City nextCity){
+      System.out.println("next city: "+nextCity);
       double maxAQValue = 0;
       double edgeAQValue = 0;
       int nextCityIndex = getCityIndex(nextCity);
@@ -153,6 +164,11 @@ public class AntQ {
             }
          }
       }
+
+      //if(maxAQValue == 0){
+         //System.out.println(nextCity+" "+agent.getInitialCity());
+         //maxAQValue = edges[nextCityIndex][getCityIndex(agent.getInitialCity())].getAQValue();
+      //}
 
       return maxAQValue;
    }

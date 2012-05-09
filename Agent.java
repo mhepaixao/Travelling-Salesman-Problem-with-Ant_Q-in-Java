@@ -47,8 +47,9 @@ public class Agent {
       citiesToVisit[AntQ.getCityIndex(city)] = null;
    }
 
-   public void addCityToCitiesToVisit(City city){
-      citiesToVisit[AntQ.getCityIndex(city)] = city;
+   public void addInitialCityToCitiesToVisit(){
+      City initialCity = getInitialCity();
+      citiesToVisit[AntQ.getCityIndex(initialCity)] = initialCity;
    }
 
    public void addCityToTour(City city){
