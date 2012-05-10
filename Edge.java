@@ -4,6 +4,7 @@ public class Edge {
    private double edgeValue;
    private double edgeHeuristicValue;
    private double AQValue;
+   private double reinforcementLearningValue;
 
    public Edge(City city1, City city2){
       this.city1 = city1;
@@ -13,6 +14,8 @@ public class Edge {
       edgeHeuristicValue = calculateEdgeHeuristicValue();
 
       this.AQValue = 0;
+
+      this.reinforcementLearningValue = 0;
    }
 
    public City getCity1(){
@@ -37,6 +40,14 @@ public class Edge {
 
    public void setAQValue(double AQValue){
       this.AQValue = AQValue;
+   }
+
+   public double getReinforcementLearningValue(){
+      return this.reinforcementLearningValue;
+   }
+
+   public void setReinforcementLearningValue(double reinforcementLearningValue){
+      this.reinforcementLearningValue = reinforcementLearningValue;
    }
 
    public boolean equals(Edge edge){

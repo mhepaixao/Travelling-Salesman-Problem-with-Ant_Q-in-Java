@@ -53,17 +53,18 @@ public class AntQ {
             }
 
             for(int j = 0; j <= agents.length - 1; j++){
-               updateAQValue(agents[j].getLastTourEdge(), 0, getMaxAQValue(agents[j], nextCity));
+               updateAQValue(agents[j].getLastTourEdge(), getMaxAQValue(agents[j], agents[j].getNextCity()));
 
                if(i == cities.length - 1){
                   agents[j].loadCitiesToVisit();
+                  agents[j].clearTour();
                }
                agents[j].setCurrentCity(agents[j].getNextCity());
                agents[j].removeCityFromCitiesToVisit(agents[j].getNextCity());
             }
          }
 
-         iterationBestTour = getIterationBestTour();
+         //iterationBestTour = getIterationBestTour();
 
          for(int j = 0; j <= agents.length - 1; j++){
             agents[j].clearTour();
@@ -143,12 +144,12 @@ public class AntQ {
       return index;
    }
 
-   private static void updateAQValue(Edge edge, double reinforcementLearningValue, double maxAQValue){
+   private static void updateAQValue(Edge edge, double maxAQValue){
       int city1Index = getCityIndex(edge.getCity1());
       int city2Index = getCityIndex(edge.getCity2());
-      
-      edges[city1Index][city2Index].setAQValue((1 - alfa) * edges[city1Index][city2Index].getAQValue() +
-                                                alfa * (reinforcementLearningValue + gamma * maxAQValue));
+      Edge edgeToUpdate = edges[city1Index][city2Index];
+
+      edgeToUpdate.setAQValue((1 - alfa) * edgeToUpdate.getAQValue() + alfa * (edgeToUpdate.getReinforcementLearningValue() + gamma * maxAQValue));
    }
 
    public static double getMaxAQValue(Agent agent, City nextCity){
@@ -158,7 +159,7 @@ public class AntQ {
       City[] citiesToVisit = agent.getCitiesToVisit();
 
       for(int i = 0; i <= citiesToVisit.length - 1; i++){
-         if(citiesToVisit[i] != null){
+         if((citiesToVisit[i] != null) && (!nextCity.equals(citiesToVisit[i]))){
             edgeAQValue = edges[nextCityIndex][getCityIndex(citiesToVisit[i])].getAQValue();
             if(edgeAQValue > maxAQValue){
                maxAQValue = edgeAQValue;
