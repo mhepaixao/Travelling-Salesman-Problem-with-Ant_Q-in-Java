@@ -2,8 +2,9 @@ import java.util.Random;
 
 public class Agent {
    private City initialCity;
-   private City citiesToVisit[];
    private City currentCity;
+   private City nextCity;
+   private City citiesToVisit[];
    //private Edge tour[];
    public Edge tour[];
 
@@ -25,6 +26,14 @@ public class Agent {
 
    public City getCurrentCity(){
       return this.currentCity;
+   }
+
+   public void setNextCity(City city){
+      this.nextCity = city;
+   }
+
+   public City getNextCity(){
+      return this.nextCity;
    }
 
    public City[] getCitiesToVisit(){
@@ -50,6 +59,10 @@ public class Agent {
    public void addInitialCityToCitiesToVisit(){
       City initialCity = getInitialCity();
       citiesToVisit[AntQ.getCityIndex(initialCity)] = initialCity;
+   }
+
+   public Edge[] getTour(){
+      return this.tour;
    }
 
    public void addCityToTour(City city){
@@ -88,6 +101,17 @@ public class Agent {
       return lastTourEdge;
    }
 
+   public double getTourValue(){
+      double tourValue = 0;
+
+      for(int i = 0; i <= tour.length - 1; i++){
+         tourValue += tour[i].getEdgeValue();
+      }
+
+      System.out.println(tourValue);
+      return tourValue;
+   }
+
    private City getCorrespondentCity(City city){
       City correspondentCity = null;
 
@@ -101,7 +125,7 @@ public class Agent {
       return correspondentCity;
    }
 
-   public City getNextCity(){
+   public City chooseNextCity(){
       double q = getRandomNumber();
       City nextCity = null;
 

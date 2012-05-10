@@ -18,6 +18,8 @@ public class AntQ {
    public static void main(String[] args){
       int totalIterations = 0;
       int iterationsCounter = 0;
+      Edge[] iterationBestTour = null; 
+      Edge[] globalBestTour = null; 
 
       if(args.length > 0){
          totalIterations = Integer.parseInt(args[0]);
@@ -34,8 +36,9 @@ public class AntQ {
 
             if(i != cities.length - 1){
                for(int j = 0; j <= agents.length - 1; j++){
-                  nextCity = agents[j].getNextCity();
-                  agents[j].addCityToTour(nextCity);
+                  nextCity = agents[j].chooseNextCity();
+                  agents[j].setNextCity(nextCity);
+                  agents[j].addCityToTour(agents[j].getNextCity());
                   if(i == cities.length - 2){
                      agents[j].addInitialCityToCitiesToVisit();
                   }
@@ -44,7 +47,8 @@ public class AntQ {
             else{
                for(int j = 0; j <= agents.length - 1; j++){
                   nextCity = agents[j].getInitialCity();
-                  agents[j].addCityToTour(nextCity);
+                  agents[j].setNextCity(nextCity);
+                  agents[j].addCityToTour(agents[j].getNextCity());
                }
             }
 
@@ -55,10 +59,16 @@ public class AntQ {
                   agents[j].loadCitiesToVisit();
                   agents[j].clearTour();
                }
-               agents[j].setCurrentCity(nextCity);
-               agents[j].removeCityFromCitiesToVisit(nextCity);
+               agents[j].setCurrentCity(agents[j].getNextCity());
+               agents[j].removeCityFromCitiesToVisit(agents[j].getNextCity());
             }
          }
+
+         //iterationBestTour = getIterationBestTour();
+
+         //for(int j = 0; j <= agents.length - 1; j++){
+            //agents[j].clearTour();
+         //}
 
          System.out.println("===========================================");
          iterationsCounter++;
@@ -114,7 +124,7 @@ public class AntQ {
 
    private static void initAgents(){
       //agents = new Agent[cities.length]; 
-      agents = new Agent[1]; 
+      agents = new Agent[2]; 
 
       for(int i = 0; i <= agents.length - 1; i++){
          agents[i] = new Agent(cities[i]);
@@ -163,6 +173,19 @@ public class AntQ {
       //}
 
       return maxAQValue;
+   }
+
+   private static Edge[] getIterationBestTour(){
+      Edge[] iterationBestTour = null;
+      double iterationBestTourValue = 0;
+
+      for(int i = 0; i <= agents.length - 1; i++){
+         if(agents[i].getTourValue() > iterationBestTourValue){
+            iterationBestTour = agents[i].getTour();
+         }
+      }
+
+      return iterationBestTour;
    }
 
    public static double getQ0(){
