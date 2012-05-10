@@ -57,18 +57,17 @@ public class AntQ {
 
                if(i == cities.length - 1){
                   agents[j].loadCitiesToVisit();
-                  agents[j].clearTour();
                }
                agents[j].setCurrentCity(agents[j].getNextCity());
                agents[j].removeCityFromCitiesToVisit(agents[j].getNextCity());
             }
          }
 
-         //iterationBestTour = getIterationBestTour();
+         iterationBestTour = getIterationBestTour();
 
-         //for(int j = 0; j <= agents.length - 1; j++){
-            //agents[j].clearTour();
-         //}
+         for(int j = 0; j <= agents.length - 1; j++){
+            agents[j].clearTour();
+         }
 
          System.out.println("===========================================");
          iterationsCounter++;
@@ -176,16 +175,31 @@ public class AntQ {
    }
 
    private static Edge[] getIterationBestTour(){
-      Edge[] iterationBestTour = null;
-      double iterationBestTourValue = 0;
+      Edge[] iterationBestTour = agents[0].getTour();
+      Edge[] tour = null;
+      double iterationBestTourValue = calculateTourValue(iterationBestTour);
+      double tourValue = 0;
 
       for(int i = 0; i <= agents.length - 1; i++){
-         if(agents[i].getTourValue() > iterationBestTourValue){
-            iterationBestTour = agents[i].getTour();
+         tour = agents[i].getTour();
+         tourValue = calculateTourValue(tour);
+         if(calculateTourValue(tour) < iterationBestTourValue){
+            iterationBestTourValue = tourValue;
+            iterationBestTour = tour;
          }
       }
 
       return iterationBestTour;
+   }
+
+   private static double calculateTourValue(Edge[] tour){
+      double tourValue = 0;
+
+      for(int i = 0; i <= tour.length - 1; i++){
+         tourValue += tour[i].getEdgeValue();
+      }
+
+      return tourValue;
    }
 
    public static double getQ0(){

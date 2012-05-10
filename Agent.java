@@ -101,17 +101,6 @@ public class Agent {
       return lastTourEdge;
    }
 
-   public double getTourValue(){
-      double tourValue = 0;
-
-      for(int i = 0; i <= tour.length - 1; i++){
-         tourValue += tour[i].getEdgeValue();
-      }
-
-      System.out.println(tourValue);
-      return tourValue;
-   }
-
    private City getCorrespondentCity(City city){
       City correspondentCity = null;
 
