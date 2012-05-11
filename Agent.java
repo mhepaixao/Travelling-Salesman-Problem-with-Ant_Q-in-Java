@@ -123,6 +123,7 @@ public class Agent {
       }
       else{
          nextCity = getPseudoRandomProportionalCity();
+         //nextCity = getPseudoRandom();
       }
 
       return nextCity;
@@ -165,6 +166,24 @@ public class Agent {
       return maxProbabilityCity;
    }
 
+   private City getPseudoRandom(){
+      double probabilities[] = new double[citiesToVisit.length];
+      double maxProbability = 0;
+      City maxProbabilityCity = null;
+      
+      for(int i = 0; i <= probabilities.length - 1; i++){
+         if(citiesToVisit[i] != null){
+            probabilities[i] = getRandomNumber();
+            if(probabilities[i] > maxProbability){
+               maxProbability = probabilities[i];
+               maxProbabilityCity = citiesToVisit[i];
+            }
+         }
+      }
+
+      return maxProbabilityCity;
+   }
+
    private double getProbability(City city){
       return getActionChoice(city) / getActionChoiceSum();
    }
@@ -182,6 +201,15 @@ public class Agent {
       return firstCityToVisit;
    }
 
+   private double getActionChoice(City city){
+      Edge edges[][] = AntQ.getEdges();
+      Edge edge = edges[AntQ.getCityIndex(getCurrentCity())][AntQ.getCityIndex(city)];
+      double edgeAQValue = edge.getAQValue();
+      double edgeHeuristicValue = edge.getEdgeHeuristicValue();
+
+      return Math.pow(edgeAQValue, AntQ.getGamma()) * Math.pow(edgeHeuristicValue, AntQ.getBeta());
+   }
+   
    private double getActionChoiceSum(){
       double actionChoiceSum = 0;
 
@@ -192,14 +220,5 @@ public class Agent {
       }
 
       return actionChoiceSum;
-   }
-
-   private double getActionChoice(City city){
-      Edge edges[][] = AntQ.getEdges();
-      Edge edge = edges[AntQ.getCityIndex(getCurrentCity())][AntQ.getCityIndex(city)];
-      double edgeAQValue = edge.getAQValue();
-      double edgeHeuristcValue = edge.getEdgeHeuristicValue();
-
-      return Math.pow(edgeAQValue, AntQ.getGamma()) * Math.pow(edgeHeuristcValue, AntQ.getBeta());
    }
 }

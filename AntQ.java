@@ -20,6 +20,7 @@ public class AntQ {
       int iterationsCounter = 0;
       Edge[] iterationBestTour = null; 
       Edge[] globalBestTour = null; 
+      int hereCounter = 0;
 
       if(args.length > 0){
          totalIterations = Integer.parseInt(args[0]);
@@ -63,10 +64,10 @@ public class AntQ {
             }
          }
 
-         Edge[] iterationBestTourTemp = getIterationBestTour();
-         iterationBestTour = new Edge[cities.length];
-         for(int i = 0; i <= iterationBestTour.length - 1; i++){
-            iterationBestTour[i] = iterationBestTourTemp[i];
+         iterationBestTour = getIterationBestTour();
+
+         for(int i = 0; i <= agents.length - 1; i++){
+            agents[i].clearTour();
          }
 
          for(int i = 0; i <= iterationBestTour.length - 1; i++){
@@ -85,23 +86,22 @@ public class AntQ {
             clearReinforcementLearningValue(iterationBestTour[i]);
          }
 
-         for(int i = 0; i <= agents.length - 1; i++){
-            agents[i].clearTour();
-         }
-
          if(iterationsCounter == 0){
             globalBestTour = iterationBestTour;
          }
          else{
             if(calculateTourValue(iterationBestTour) < calculateTourValue(globalBestTour)){
                System.out.println("here");
+               hereCounter++;
                globalBestTour = iterationBestTour;
             }
          }
 
          iterationsCounter++;
       }
+      System.out.println("here counter: " + hereCounter);
       System.out.println("Best tour value: " + calculateTourValue(globalBestTour));
+      System.exit(0);
    }
 
    private static void init(){
@@ -152,8 +152,8 @@ public class AntQ {
    }
 
    private static void initAgents(){
-      //agents = new Agent[cities.length]; 
-      agents = new Agent[1]; 
+      agents = new Agent[cities.length]; 
+      //agents = new Agent[1]; 
 
       for(int i = 0; i <= agents.length - 1; i++){
          agents[i] = new Agent(cities[i]);
@@ -205,9 +205,10 @@ public class AntQ {
    }
 
    private static Edge[] getIterationBestTour(){
-      Edge[] iterationBestTour = agents[0].getTour();
+      Edge[] iterationBestTourTemp = agents[0].getTour();
+      Edge[] iterationBestTour = new Edge[iterationBestTourTemp.length];
       Edge[] tour = null;
-      double iterationBestTourValue = calculateTourValue(iterationBestTour);
+      double iterationBestTourValue = calculateTourValue(iterationBestTourTemp);
       double tourValue = 0;
 
       for(int i = 0; i <= agents.length - 1; i++){
@@ -215,8 +216,12 @@ public class AntQ {
          tourValue = calculateTourValue(tour);
          if(calculateTourValue(tour) < iterationBestTourValue){
             iterationBestTourValue = tourValue;
-            iterationBestTour = tour;
+            iterationBestTourTemp = tour;
          }
+      }
+
+      for(int i = 0; i <= iterationBestTourTemp.length - 1; i++){
+         iterationBestTour[i] = iterationBestTourTemp[i];
       }
 
       return iterationBestTour;
@@ -226,10 +231,10 @@ public class AntQ {
       int city1Index = getCityIndex(edge.getCity1());
       int city2Index = getCityIndex(edge.getCity2());
 
-      System.out.println("tour value: " +tourValue);
-      System.out.println("before update: " +edges[city1Index][city2Index].getReinforcementLearningValue());
+      //System.out.println("tour value: " +tourValue);
+      //System.out.println("before update: " +edges[city1Index][city2Index].getReinforcementLearningValue());
       edges[city1Index][city2Index].setReinforcementLearningValue(w / tourValue);
-      System.out.println("after update: " +edges[city1Index][city2Index].getReinforcementLearningValue());
+      //System.out.println("after update: " +edges[city1Index][city2Index].getReinforcementLearningValue());
    }
 
    private static void clearReinforcementLearningValue(Edge edge){
