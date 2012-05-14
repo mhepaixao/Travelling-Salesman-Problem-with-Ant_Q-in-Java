@@ -122,8 +122,8 @@ public class Agent {
          nextCity = getMaxActionChoiceCity();
       }
       else{
-         nextCity = getPseudoRandomProportionalCity();
-         //nextCity = getPseudoRandom();
+         //nextCity = getPseudoRandomProportionalCity();
+         nextCity = getPseudoRandom();
       }
 
       return nextCity;
@@ -207,7 +207,7 @@ public class Agent {
       double edgeAQValue = edge.getAQValue();
       double edgeHeuristicValue = edge.getEdgeHeuristicValue();
 
-      return Math.pow(edgeAQValue, AntQ.getGamma()) * Math.pow(edgeHeuristicValue, AntQ.getBeta());
+      return Math.pow(edgeAQValue, AntQ.getDelta()) * Math.pow(edgeHeuristicValue, AntQ.getBeta());
    }
    
    private double getActionChoiceSum(){

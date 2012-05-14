@@ -103,7 +103,7 @@ public class AntQ {
       System.out.println("Best tour value: " + calculateTourValue(globalBestTour));
       System.exit(0);
    }
-
+   
    private static void init(){
       InstanceReader instanceReader = new InstanceReader();
       cities = instanceReader.getCitiesList();
@@ -133,9 +133,23 @@ public class AntQ {
             sumOfEdges += edges[i][j].getEdgeValue();
          }
       }
-      averageValueOfEdges = sumOfEdges / edges.length;
+      averageValueOfEdges = sumOfEdges / getNumberOfEdges();
       
       return 1 / (averageValueOfEdges * cities.length);
+   }
+
+   private static int getNumberOfEdges(){
+      int numberOfEdges = 0;
+
+      for(int i = 0; i <= cities.length - 1; i++){
+         for(int j = 0; j <= cities.length - 1; j++){
+            if(i != j){
+               numberOfEdges++;
+            }
+         }
+      }
+
+      return numberOfEdges;
    }
 
    private static void initAQValues(double AQ0){
@@ -272,5 +286,9 @@ public class AntQ {
 
    public static double getBeta(){
       return beta;
+   }
+
+   public static double getDelta(){
+      return delta;
    }
 }
