@@ -78,7 +78,7 @@ public class Edge {
     * @author Matheus Paixão
     * @param edge An Edge to compare.
     * @return true if the edges are equal, false if not.
-    * @see equals method of City class 
+    * @see equals method of Node class 
     */
    public boolean equals(Edge edge){
       boolean result = false;
@@ -122,6 +122,7 @@ public class Edge {
     *
     * @author Matheus Paixão.
     * @return The edge in String format.
+    * @see equals method of Node class.
     */
    public String toString(){
       return getCity1().toString() + " " + getCity2().toString();
