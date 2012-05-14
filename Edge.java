@@ -72,7 +72,7 @@ public class Edge {
    }
 
    /**
-    * Method to compare if a edge is equal to other one.
+    * Method to compare if an edge is equal to other one.
     *
     * An edge is equal to other if its nodes are equal.
     * @author Matheus Paixão
@@ -121,7 +121,7 @@ public class Edge {
     * Method to format the edge in String format.
     *
     * @author Matheus Paixão.
-    * @return The edge in String mode.
+    * @return The edge in String format.
     */
    public String toString(){
       return getCity1().toString() + " " + getCity2().toString();

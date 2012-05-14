@@ -1,7 +1,20 @@
+/**
+ * Class to represent the nodes.
+ * 
+ * It's formed by the X and Y value of cartesian coordinates.
+ * @author: Matheus Paixão 
+ */
 public class City {
    private double x;
    private double y;
 
+   /**
+    * Method to create an node passing the X and Y coordinates.
+    *
+    * @author Matheus Paixão 
+    * @param x X coordinate of the node. 
+    * @param y Y coordinate of the node. 
+    */
    public City(double x, double y){
       this.x = x;
       this.y = y;
@@ -15,6 +28,14 @@ public class City {
       return this.y;
    }
 
+   /**
+    * Method to compare if a node is equal to other one.
+    *
+    * A node is equal to other if its X and Y values are equal.
+    * @author Matheus Paixão
+    * @param city A node to compare.
+    * @return true if the nodes are equal, false if not.
+    */
    public boolean equals(City city){
       boolean result = false;
 
@@ -27,6 +48,12 @@ public class City {
       return result;
    }
 
+   /**
+    * Method to format the node in String format.
+    *
+    * @author Matheus Paixão.
+    * @return The node in String format.
+    */
    public String toString(){
       return "(" + getX() + " " + getY() + ")";
    }
