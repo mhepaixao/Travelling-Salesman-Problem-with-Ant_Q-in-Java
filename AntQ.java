@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class AntQ {
    //CONSTANTS
    private static final double delta = 1;
@@ -26,7 +24,7 @@ public class AntQ {
          totalIterations = Integer.parseInt(args[0]);
       }
       else{
-         totalIterations = 14;
+         totalIterations = 200;
       }
 
       init();
@@ -74,12 +72,8 @@ public class AntQ {
             updateReinforcementLearningValue(iterationBestTour[i], calculateTourValue(iterationBestTour));
          }
 
-         for(int i = 0; i < cities.length - 1; i++){
-            for(int j = 0; j <= cities.length - 1; j++){
-               if(i != j){
-                  updateAQValue(edges[i][j], 0);
-               }
-            }
+         for(int i = 0; i <= iterationBestTour.length - 1; i++){
+            updateAQValue(iterationBestTour[i], 0);
          }
 
          for(int i = 0; i <= iterationBestTour.length - 1; i++){
@@ -104,6 +98,30 @@ public class AntQ {
       System.exit(0);
    }
    
+   public static double getQ0(){
+      return q0;
+   }
+
+   public static City[] getCities(){
+      return cities;
+   }
+
+   public static Edge[][] getEdges(){
+      return edges;
+   }
+
+   public static double getGamma(){
+      return gamma;
+   }
+
+   public static double getBeta(){
+      return beta;
+   }
+
+   public static double getDelta(){
+      return delta;
+   }
+
    private static void init(){
       InstanceReader instanceReader = new InstanceReader();
       cities = instanceReader.getCitiesList();
@@ -245,10 +263,7 @@ public class AntQ {
       int city1Index = getCityIndex(edge.getCity1());
       int city2Index = getCityIndex(edge.getCity2());
 
-      //System.out.println("tour value: " +tourValue);
-      //System.out.println("before update: " +edges[city1Index][city2Index].getReinforcementLearningValue());
       edges[city1Index][city2Index].setReinforcementLearningValue(w / tourValue);
-      //System.out.println("after update: " +edges[city1Index][city2Index].getReinforcementLearningValue());
    }
 
    private static void clearReinforcementLearningValue(Edge edge){
@@ -266,29 +281,5 @@ public class AntQ {
       }
 
       return tourValue;
-   }
-
-   public static double getQ0(){
-      return q0;
-   }
-
-   public static City[] getCities(){
-      return cities;
-   }
-
-   public static Edge[][] getEdges(){
-      return edges;
-   }
-
-   public static double getGamma(){
-      return gamma;
-   }
-
-   public static double getBeta(){
-      return beta;
-   }
-
-   public static double getDelta(){
-      return delta;
    }
 }
