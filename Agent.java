@@ -11,7 +11,7 @@ import java.util.Random;
  *
  * Each agent has to know its nextCity to go before really go. It's used basically in AntQ class.
  *
- * The citiesToVisit array store the nodes that the agent didn't visit yet. The null values are visited nodes.
+ * The citiesToVisit array store the nodes that the agent didn't visit yet. The null values represents the visited nodes.
  *
  * The tour array is the path, the sequency of nodes, done by the agent.
  *
@@ -57,7 +57,7 @@ public class Agent {
    }
 
    public void setNextCity(City city){
-      this.nextCity = city;
+      this.nextCity = getCorrespondentCity(city);
    }
 
    public City getNextCity(){
@@ -136,9 +136,9 @@ public class Agent {
    /**
     * Method to insert an edge to the agent tour.
     *
-    * Insert an edge equal to the edge from the AntQ algorihtm is inserted in the last null position of the tour.
+    * Insert an edge equal to the edge from the AntQ algorihtm. The edge is inserted in the last null position of the tour.
     * @author Matheus Paixão
-    * @param edge the edge from the edges matrix of AntQ algorithm to be inserted in the tour.
+    * @param edge the edge from the edges matrix of AntQ algorithm to be inserted in the agent's tour.
     */
    private void insertEdge(Edge edge){
       for(int i = 0; i <= tour.length - 1; i++){
@@ -180,6 +180,15 @@ public class Agent {
       }
    }
 
+   /**
+    * Method to get the correspondent of the specified city in agent's cities to visit.
+    *
+    * @author Matheus Paixão
+    * @param city the city to be compared with the cities in agent's cities to be visited.
+    * @return the correspondent city of the passed city in agent's cities to be visited.
+    * @see setNextCity
+    * @see setCurrentCity
+    */
    private City getCorrespondentCity(City city){
       City correspondentCity = null;
 
@@ -193,26 +202,61 @@ public class Agent {
       return correspondentCity;
    }
 
+   /**
+    * Method that implements the AntQ transition rule.
+    *
+    * It's generated a random number q in the interval (0,1). Then q is compared 
+    * with the initialization parameter q0, this test will define if the agent will
+    * choose the best possible action (exploitation) or a random action (exploration).
+    * The exploration choice can be done by three methods:
+    * 1) pseudo-random
+    * 2) pseudo-random-proportional
+    * 3) random-proportional
+    * @author Matheus Paixão
+    * @return the next city of a an agent
+    * @see getRandomNumber
+    * @see getMaxActionChoiceCity
+    * @see getPseudoRandomProportionalCity
+    * @see getPseudoRandomCity
+    */
    public City chooseNextCity(){
       double q = getRandomNumber();
       City nextCity = null;
 
       if(q <= AntQ.getQ0()){
+         //exploitation
          nextCity = getMaxActionChoiceCity();
       }
       else{
-         //nextCity = getPseudoRandomProportionalCity();
-         nextCity = getPseudoRandom();
+         //exploration
+         nextCity = getPseudoRandomCity(); //method 1
+         //nextCity = getPseudoRandomProportionalCity(); //method 2
       }
 
       return nextCity;
    }
 
+   /**
+    * Method to get a random number in the (0,1) interval.
+    *
+    * @author Matheus Paixão
+    * @return a random number in the (0,1) interval
+    * @see nextDouble method in Random class
+    */
    private double getRandomNumber(){
       Random random = new Random();
       return random.nextDouble();
    }
 
+   /**
+    * Method to get the best possible city to go.
+    *
+    * How 'good' is an action is measured by it's action choice
+    * @author Matheus Paixão
+    * @return the best possible city to go
+    * @see getFirstCityToVisit
+    * @see getActionChoice
+    */
    private City getMaxActionChoiceCity(){
       City maxActionChoiceCity = getFirstCityToVisit();
       City city = null;
@@ -229,23 +273,16 @@ public class Agent {
       return maxActionChoiceCity;
    }
 
-   private City getPseudoRandomProportionalCity(){
-      City maxProbabilityCity = getFirstCityToVisit();
-      City city = null;
-
-      for(int i = 0; i <= citiesToVisit.length - 1; i++){
-         if(citiesToVisit[i] != null){
-            city = citiesToVisit[i];
-            if(getProbability(city) > getProbability(maxProbabilityCity)){
-               maxProbabilityCity = city;
-            }
-         }
-      }
-
-      return maxProbabilityCity;
-   }
-
-   private City getPseudoRandom(){
+   /**
+    * Method to get the next agent city using the pseudo-random method.
+    * 
+    * In this method each possible city to go receive a random probability in (0,1) interval.
+    * The max probability city is choosen.
+    * @author Matheus Paixão
+    * @return the next agent city using pseudo-random method
+    * @see getRandomNumber
+    */
+   private City getPseudoRandomCity(){
       double probabilities[] = new double[citiesToVisit.length];
       double maxProbability = 0;
       City maxProbabilityCity = null;
@@ -263,10 +300,52 @@ public class Agent {
       return maxProbabilityCity;
    }
 
-   private double getProbability(City city){
+   /**
+    * Method to get the next city using the pseudo-random-proportional method.
+    *
+    * Each possible city to go has a probability given by the getProbability method. 
+    * The higher probability city is choosen.
+    * @author Matheus Paixão
+    * @return the next city using the pseudo-random-proportional method.
+    * @see getPseudoProbability
+    */
+   private City getPseudoRandomProportionalCity(){
+      City maxProbabilityCity = getFirstCityToVisit();
+      City city = null;
+
+      for(int i = 0; i <= citiesToVisit.length - 1; i++){
+         if(citiesToVisit[i] != null){
+            city = citiesToVisit[i];
+            if(getPseudoProbability(city) > getPseudoProbability(maxProbabilityCity)){
+               maxProbabilityCity = city;
+            }
+         }
+      }
+
+      return maxProbabilityCity;
+   }
+
+   /**
+    * Method to get a pseudo probability of an action.
+    *
+    * The pseudo probability of an action is computed by the division of its
+    * action choice by the sum of the action choices of all cities possible to be visited.
+    * @author Matheus Paixão
+    * @param city city used to determine the pseudo probability of the action
+    * @return the pseudo probability of the action
+    * @see getActionChoice
+    * @see getActionChoiceSum
+    */
+   private double getPseudoProbability(City city){
       return getActionChoice(city) / getActionChoiceSum();
    }
 
+   /**
+    * Method to get the first possible city to be visited by the agent.
+    *
+    * @author Matheus Paixão
+    * @return the first possible city (not null) to go in the cities to be visited array
+    */
    private City getFirstCityToVisit(){
       City firstCityToVisit = null;
 
@@ -280,6 +359,16 @@ public class Agent {
       return firstCityToVisit;
    }
 
+   /**
+    * Method to get the action choice of an edge formed by the current city and the passed city.
+    *
+    * Uses the edge of the edges matrix of the AntQ algorithm.
+    * @author Matheus Paixão
+    * @param city the second city of the edge 
+    * @return the action choice of the edge
+    * @see getCityIndex of AntQ class
+    * @see Math.pow
+    */
    private double getActionChoice(City city){
       Edge edges[][] = AntQ.getEdges();
       Edge edge = edges[AntQ.getCityIndex(getCurrentCity())][AntQ.getCityIndex(city)];
@@ -289,6 +378,13 @@ public class Agent {
       return Math.pow(edgeAQValue, AntQ.getDelta()) * Math.pow(edgeHeuristicValue, AntQ.getBeta());
    }
    
+   /**
+    * Method to get the sum of action choices of all remaining cities to visit.
+    *
+    * @author Matheus Paixão
+    * @return the sum of action choices of all remaining cities to visit.
+    * @see getActionChoice
+    */
    private double getActionChoiceSum(){
       double actionChoiceSum = 0;
 
