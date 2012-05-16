@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.Arrays;
 
 /**
  * Class to describe the behavior of the agents, or ants, in the goal
@@ -22,7 +23,6 @@ public class Agent {
    private City currentCity;
    private City nextCity;
    private City citiesToVisit[];
-   //private Edge tour[];
    public Edge tour[];
 
    /**
@@ -208,10 +208,9 @@ public class Agent {
     * It's generated a random number q in the interval (0,1). Then q is compared 
     * with the initialization parameter q0, this test will define if the agent will
     * choose the best possible action (exploitation) or a random action (exploration).
-    * The exploration choice can be done by three methods:
+    * The exploration choice can be done by two methods:
     * 1) pseudo-random
     * 2) pseudo-random-proportional
-    * 3) random-proportional
     * @author Matheus Paixão
     * @return the next city of a an agent
     * @see getRandomNumber
@@ -251,9 +250,9 @@ public class Agent {
    /**
     * Method to get the best possible city to go.
     *
-    * How 'good' is an action is measured by it's action choice
+    * How 'good' is an action is measured by it's action choice.
     * @author Matheus Paixão
-    * @return the best possible city to go
+    * @return the best possible city to go.
     * @see getFirstCityToVisit
     * @see getActionChoice
     */
@@ -279,7 +278,7 @@ public class Agent {
     * In this method each possible city to go receive a random probability in (0,1) interval.
     * The max probability city is choosen.
     * @author Matheus Paixão
-    * @return the next agent city using pseudo-random method
+    * @return the next agent city using pseudo-random method.
     * @see getRandomNumber
     */
    private City getPseudoRandomCity(){
@@ -303,41 +302,105 @@ public class Agent {
    /**
     * Method to get the next city using the pseudo-random-proportional method.
     *
-    * Each possible city to go has a probability given by the getProbability method. 
-    * The higher probability city is choosen.
+    * Each possible city to go has a pseudo random proportional probability
+    * calculated in the getPseudoRandomProportionalProbabilities method.
+    *
+    * Then a roulette selection method is runned to select the next city.
     * @author Matheus Paixão
     * @return the next city using the pseudo-random-proportional method.
-    * @see getPseudoProbability
+    * @see getPseudoRandomProportionalProbabilities
+    * @see getRouletteValue
     */
    private City getPseudoRandomProportionalCity(){
-      City maxProbabilityCity = getFirstCityToVisit();
       City city = null;
+      double rouletteValue = 0;
+      double probabilities[] = getPseudoRandomProportionalProbabilities();
 
-      for(int i = 0; i <= citiesToVisit.length - 1; i++){
-         if(citiesToVisit[i] != null){
+      rouletteValue = getRouletteValue(probabilities);
+
+      for(int i = 0; i <= probabilities.length - 1; i++){
+         if(rouletteValue == probabilities[i]){
             city = citiesToVisit[i];
-            if(getPseudoProbability(city) > getPseudoProbability(maxProbabilityCity)){
-               maxProbabilityCity = city;
-            }
+            break;
          }
       }
 
-      return maxProbabilityCity;
+      return city;
    }
 
    /**
-    * Method to get a pseudo probability of an action.
+    * Method to calculate the pseudo random proportional probability of all the
+    * cities to be visited by the agent.
     *
-    * The pseudo probability of an action is computed by the division of its
+    * The pseudo random proportional probability of a city is calculated by 
+    * the getPseudoRandomProportionalProbability method.
+    * @author Matheus Paixão
+    * @return an array containing the pseudo random proportional probability of the cities to visit.
+    * @see getPseudoRandomProportionalProbability
+    */
+   private double[] getPseudoRandomProportionalProbabilities(){
+      double probabilities[] = new double[citiesToVisit.length];
+
+      for(int i = 0; i <= probabilities.length - 1; i++){
+         if(citiesToVisit[i] != null){
+            probabilities[i] = getPseudoRandomProportionalProbability(citiesToVisit[i]);
+         }
+         else{
+            probabilities[i] = 0;
+         }
+      }
+
+      return probabilities;
+   }
+
+   /**
+    * Method to get the pseudo random proportional probability of an action.
+    *
+    * The pseudo random proportional probability of an action is computed by the division of its
     * action choice by the sum of the action choices of all cities possible to be visited.
     * @author Matheus Paixão
-    * @param city city used to determine the pseudo probability of the action
-    * @return the pseudo probability of the action
+    * @param city city used to determine the pseudo random proportional probability of the action
+    * @return the pseudo random proportional probability of the action
     * @see getActionChoice
     * @see getActionChoiceSum
     */
-   private double getPseudoProbability(City city){
+   private double getPseudoRandomProportionalProbability(City city){
       return getActionChoice(city) / getActionChoiceSum();
+   }
+
+   /**
+    * Method to get the value of the probability selected by the roulette.
+    *
+    * Higher the probability of a city, higher the chance to be choosen by the roulette.
+    * For more information search for "roulette selection method".
+    * @author Matheus Paixão
+    * @param probabilities an array containing the probabilities for roulette selection.
+    * @return the probability value choosen by the roulette.
+    * @see getRandomNumber
+    */
+   private double getRouletteValue(double[] probabilities){
+      double[] rouletteProbabilities = new double[probabilities.length];
+      double neddle = 0;
+      double neddleChecker = 0;
+      double rouletteValue = 0;
+
+      for(int i = 0; i <= rouletteProbabilities.length - 1; i++){
+         rouletteProbabilities[i] = probabilities[i];
+      }
+
+      Arrays.sort(rouletteProbabilities);
+
+      neddle = getRandomNumber();
+
+      for(int i = 0; i <= rouletteProbabilities.length - 1; i++){
+         neddleChecker += rouletteProbabilities[i];
+         if(neddleChecker >= neddle){
+            rouletteValue = rouletteProbabilities[i];
+            break;
+         }
+      }
+
+      return rouletteValue;
    }
 
    /**
