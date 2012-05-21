@@ -426,6 +426,7 @@ public class Agent {
     * Method to get the action choice of an edge formed by the current city and the passed city.
     *
     * Uses the edge of the edges matrix of the AntQ algorithm.
+    * When the action choice value is too low (Not a Number) is considered equal to 0.
     * @author Matheus Paixão
     * @param city the second city of the edge 
     * @return the action choice of the edge
@@ -438,7 +439,13 @@ public class Agent {
       double edgeAQValue = edge.getAQValue();
       double edgeHeuristicValue = edge.getEdgeHeuristicValue();
 
-      return Math.pow(edgeAQValue, AntQ.getDelta()) * Math.pow(edgeHeuristicValue, AntQ.getBeta());
+      double actionChoice =  Math.pow(edgeAQValue, AntQ.getDelta()) * Math.pow(edgeHeuristicValue, AntQ.getBeta());
+
+      if(Double.isNaN(actionChoice)){
+         actionChoice = 0;
+      }
+
+      return actionChoice;
    }
    
    /**

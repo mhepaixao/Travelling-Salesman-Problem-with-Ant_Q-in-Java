@@ -85,7 +85,7 @@ public class AntQ {
          }
          else{
             if(calculateTourValue(iterationBestTour) < calculateTourValue(globalBestTour)){
-               System.out.println("here");
+               System.out.println("found best tour");
                hereCounter++;
                globalBestTour = iterationBestTour;
             }
