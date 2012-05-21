@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Class used to read the instance.
  * 
  * This class extends JFrame because the user chooses the instance by a JFileChooser.
- * @author: Matheus Paixão 
+ * @author: Matheus Paixao 
  */
 public class InstanceReader extends JFrame {
    Pattern pattern;
@@ -29,10 +29,13 @@ public class InstanceReader extends JFrame {
     * to Node objects.
     *
     * The instance file has to be in one of the formats that follows:
-    * 1) X Y : in this format each line is a node and X an Y are its coordinates.  
+    * 1) n Xe+P Ye+P, where n is the line number, X is the x cartesian value x*(10^P) and Y is the y cartesian value y*(10^P)  
+    * 2) n X Y, where n is the line number, X is the x cartesian value and Y is the y cartesian value  
+    * 3) Xe+P Ye+P, where X is the x cartesian value x*(10^P) and Y is the y cartesian value y*(10^P)  
+    * 4) X Y, where X is the x cartesian value and Y is the y cartesian value  
     *
-    * @author Matheus Paixão
-    * @return a Node array containing all the nodes of the instance.
+    * @author Matheus Paixao
+    * @return a City array containing all the cities of the instance.
     * @see getInstance
     * @see toArray method from ArrayList class
     */
@@ -60,10 +63,11 @@ public class InstanceReader extends JFrame {
                pattern = Pattern.compile("[0-9]");
                Matcher numbersMatcher = pattern.matcher(instanceLine) ;
 
+               //if it isn't a text line and has numbers
                if((twoLettersMatcher.find() == false) && (numbersMatcher.find() == true)){
                   pattern = Pattern.compile("\\s{2,}");
                   Matcher spacesMatcher = pattern.matcher(instanceLine);
-                  instanceLine = spacesMatcher.replaceAll(" ").trim();
+                  instanceLine = spacesMatcher.replaceAll(" ").trim(); //replace all spaces for just one
 
                   values = instanceLine.split(" ");
                   if(values.length > 3){
@@ -72,18 +76,18 @@ public class InstanceReader extends JFrame {
                   else{
                      if(values.length == 3){
                         if(instanceLine.contains("e")){
-                           city = getExpCartesianCity(values[1], values[2]);
+                           city = getExpCartesianCity(values[1], values[2]); //format 1
                         }
                         else{
-                           city = getCartesianCity(values[1], values[2]);
+                           city = getCartesianCity(values[1], values[2]); //format 2
                         }
                      }
                      else{
                         if(instanceLine.contains("e")){
-                           city = getExpCartesianCity(values[0], values[1]);
+                           city = getExpCartesianCity(values[0], values[1]); //format 3
                         }
                         else{
-                           city = getCartesianCity(values[0], values[1]);
+                           city = getCartesianCity(values[0], values[1]); //format 4
                         }
                      }
                   }
@@ -104,7 +108,7 @@ public class InstanceReader extends JFrame {
       temporaryCities = dynamicListOfCities.toArray();
       cities = new City[temporaryCities.length];
       for(int i = 0; i <= cities.length - 1; i++){
-         cities[i] = (City) temporaryCities[i]; //cast the Object array to a Node array
+         cities[i] = (City) temporaryCities[i]; //cast the Object array to a City array
       }
 
       return cities;
@@ -114,7 +118,7 @@ public class InstanceReader extends JFrame {
     * Method to get the instance file.
     *
     * Uses a JFileChooser to select the instace file.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @return the instance file.
     */
    private File getInstance(){
@@ -129,6 +133,14 @@ public class InstanceReader extends JFrame {
       return instance;
    }
 
+   /**
+    * Method to get the city when the values are in exponencial format.
+    *
+    * @author Matheus Paixao
+    * @param value1 the x cartesian value in exponencial format.
+    * @param value2 the y cartesian value in exponencial format.
+    * @return the city with the x and y coordinates.
+    */
    private City getExpCartesianCity(String value1, String value2){
       String[]  xValues = value1.split("e+");
       double x = Double.parseDouble(xValues[0]);
@@ -141,6 +153,14 @@ public class InstanceReader extends JFrame {
       return new City(x * Math.pow(10, xPower), y * Math.pow(10, yPower));
    }
 
+   /**
+    * Method to get the city when the values are just in String format.
+    *
+    * @author Matheus Paixao
+    * @param value1 the x cartesian value in String format.
+    * @param value2 the y cartesian value in String format.
+    * @return the city with the x and y coordinates.
+    */
    private City getCartesianCity(String value1, String value2){
       double x = Double.parseDouble(value1);
       double y = Double.parseDouble(value2);
