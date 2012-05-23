@@ -1,23 +1,30 @@
 /**
- * Class to represent the nodes.
+ * Class to represent the cities.
  * 
- * It's formed by the X and Y value of cartesian coordinates.
+ * It's formed by the id, X and Y value of cartesian coordinates.
  * @author: Matheus Paixao 
  */
 public class City {
+   private int id;
    private double x;
    private double y;
 
    /**
-    * Method to create an node passing the X and Y coordinates.
+    * Method to create a city passing the id, X and Y coordinates.
     *
     * @author Matheus Paixao 
+    * @param id id of the city
     * @param x X coordinate of the node. 
     * @param y Y coordinate of the node. 
     */
-   public City(double x, double y){
+   public City(int id, double x, double y){
+      this.id = id;
       this.x = x;
       this.y = y;
+   }
+
+   private int getId(){
+      return this.id;
    }
 
    public double getX(){
@@ -29,18 +36,18 @@ public class City {
    }
 
    /**
-    * Method to compare if a node is equal to other one.
+    * Method to compare if a city is equal to other one.
     *
-    * A node is equal to other if its X and Y values are equal.
+    * A city is equal to other if they have the same id.
     * @author Matheus Paixao
-    * @param city A node to compare.
-    * @return true if the nodes are equal, false if not.
+    * @param city A city to compare.
+    * @return true if the cities are equal, false if not.
     */
    public boolean equals(City city){
       boolean result = false;
 
       if(city instanceof City){
-         if((city.getX() == this.getX()) && (city.getY() == this.getY())){
+         if(city.getId() == this.getId()){
             result = true;
          }
       }
@@ -49,12 +56,12 @@ public class City {
    }
 
    /**
-    * Method to format the node in String format.
+    * Method to format the city in String format.
     *
     * @author Matheus Paixao.
-    * @return The node in String format.
+    * @return The city in String format.
     */
    public String toString(){
-      return "(" + getX() + " " + getY() + ")";
+      return getId() + " " + "(" + getX() + " " + getY() + ")";
    }
 }
