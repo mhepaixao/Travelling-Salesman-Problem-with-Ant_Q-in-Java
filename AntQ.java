@@ -189,8 +189,11 @@ public class AntQ {
    private static void init(){
       InstanceReader instanceReader = new InstanceReader();
       cities = instanceReader.getCitiesList();
+      String instanceType = instanceReader.getIntanceType();
 
-      createEdges();
+      if(instanceType == "coordinates"){
+         createEdges();
+      }
       initAQValues(getAQ0());
 
       initAgents();

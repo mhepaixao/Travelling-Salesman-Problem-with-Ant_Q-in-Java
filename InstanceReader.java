@@ -17,7 +17,16 @@ import java.util.ArrayList;
  * @author: Matheus Paixao 
  */
 public class InstanceReader extends JFrame {
-   Pattern pattern;
+   private String instanceType;
+   private Pattern pattern;
+
+   public String getIntanceType(){
+      return this.instanceType;
+   }
+
+   public void setInstanceType(String instanceType){
+      this.instanceType = instanceType;
+   }
 
    /**
     * Method to get the list of nodes.
@@ -73,8 +82,11 @@ public class InstanceReader extends JFrame {
                   values = instanceLine.split(" ");
                   if(values.length > 3){
                      //distance matrix format
+                     setInstanceType("matrix");
                   }
                   else{
+                     setInstanceType("coordinates");
+
                      if(values.length == 3){
                         if(instanceLine.contains("e")){
                            city = getExpCartesianCity(instanceLineCounter, values[1], values[2]); //format 1
