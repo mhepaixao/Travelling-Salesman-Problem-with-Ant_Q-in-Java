@@ -12,11 +12,11 @@ import java.util.Arrays;
  *
  * Each agent has to know its nextCity to go before really go. It's used basically in AntQ class.
  *
- * The citiesToVisit array store the nodes that the agent didn't visit yet. The null values represents the visited nodes.
+ * The citiesToVisit array store the cities that the agent didn't visit yet. The null values represents the visited nodes.
  *
  * The tour array is the path, the sequency of nodes, done by the agent.
  *
- * @author Matheus Paixão
+ * @author Matheus Paixao
  */
 public class Agent {
    private City initialCity;
@@ -32,7 +32,7 @@ public class Agent {
     * Create the tour array with the same size of the citiesToVisit.
     * Fill the citiesToVisit array with City objects equals to the cities array of AntQ.
     * Set the initial city the current city and remove the initial city of the cities to be visited.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @param initialCity the city that will be the initial city of the agent.
     * @see loadCitiesToVisit
     * @see removeCityFromCitiesToVisit
@@ -80,7 +80,7 @@ public class Agent {
     * Method to fill the citiesToVisit array with City objects that 
     * are equal to the cities from the AntQ algorithm.
     *
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     */
    public void loadCitiesToVisit(){
       City cities[] = AntQ.getCities();
@@ -95,7 +95,7 @@ public class Agent {
     *
     * Get the index of the city in the cities array in AntQ and
     * set the correspondent city in citiesToVisit to null.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @param city the city to be removed from citiesToVisit.
     * @see getCityIndex in AntQ class.
     */
@@ -109,7 +109,7 @@ public class Agent {
     * Get the index of the initial city of the agent in the cities array in AntQ
     * and set the correspondent position of the citiesToVisit with the initial city.
     * It's used when the agent have visited all the nodes and has to go back to the first one.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @see getCityIndex in AntQ class.
     */
    public void addInitialCityToCitiesToVisit(){
@@ -121,7 +121,7 @@ public class Agent {
     * Method to add a new city to the tour.
     *
     * Insert an edge where the city 1 is the current city and the city 2 is the city to be added.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @param city city to be added to the tour.
     * @see insertEdge
     */
@@ -137,7 +137,7 @@ public class Agent {
     * Method to insert an edge to the agent tour.
     *
     * Insert an edge equal to the edge from the AntQ algorihtm. The edge is inserted in the last null position of the tour.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @param edge the edge from the edges matrix of AntQ algorithm to be inserted in the agent's tour.
     */
    private void insertEdge(Edge edge){
@@ -152,7 +152,7 @@ public class Agent {
    /**
     * Method to get the last edge added to the agent tour.
     *
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @return the last edge added to the agent tour.
     */
    public Edge getLastTourEdge(){
@@ -172,7 +172,7 @@ public class Agent {
     * Method to clear the agent tour.
     *
     * It's used when an agent finish a tour (visit all cities) and has to start another one.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     */
    public void clearTour(){
       for(int i = 0; i <= tour.length - 1; i ++){
@@ -183,7 +183,7 @@ public class Agent {
    /**
     * Method to get the correspondent of the specified city in agent's cities to visit.
     *
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @param city the city to be compared with the cities in agent's cities to be visited.
     * @return the correspondent city of the passed city in agent's cities to be visited.
     * @see setNextCity
@@ -211,7 +211,7 @@ public class Agent {
     * The exploration choice can be done by two methods:
     * 1) pseudo-random
     * 2) pseudo-random-proportional
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @return the next city of a an agent
     * @see getRandomNumber
     * @see getMaxActionChoiceCity
@@ -238,7 +238,7 @@ public class Agent {
    /**
     * Method to get a random number in the (0,1) interval.
     *
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @return a random number in the (0,1) interval
     * @see nextDouble method in Random class
     */
@@ -251,7 +251,7 @@ public class Agent {
     * Method to get the best possible city to go.
     *
     * How 'good' is an action is measured by it's action choice.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @return the best possible city to go.
     * @see getFirstCityToVisit
     * @see getActionChoice
@@ -277,7 +277,7 @@ public class Agent {
     * 
     * In this method each possible city to go receive a random probability in (0,1) interval.
     * The max probability city is choosen.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @return the next agent city using pseudo-random method.
     * @see getRandomNumber
     */
@@ -306,7 +306,7 @@ public class Agent {
     * calculated in the getPseudoRandomProportionalProbabilities method.
     *
     * Then a roulette selection method is runned to select the next city.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @return the next city using the pseudo-random-proportional method.
     * @see getPseudoRandomProportionalProbabilities
     * @see getRouletteValue
@@ -334,7 +334,7 @@ public class Agent {
     *
     * The pseudo random proportional probability of a city is calculated by 
     * the getPseudoRandomProportionalProbability method.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @return an array containing the pseudo random proportional probability of the cities to visit.
     * @see getPseudoRandomProportionalProbability
     */
@@ -358,7 +358,7 @@ public class Agent {
     *
     * The pseudo random proportional probability of an action is computed by the division of its
     * action choice by the sum of the action choices of all cities possible to be visited.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @param city city used to determine the pseudo random proportional probability of the action
     * @return the pseudo random proportional probability of the action
     * @see getActionChoice
@@ -373,7 +373,7 @@ public class Agent {
     *
     * Higher the probability of a city, higher the chance to be choosen by the roulette.
     * For more information search for "roulette selection method".
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @param probabilities an array containing the probabilities for roulette selection.
     * @return the probability value choosen by the roulette.
     * @see getRandomNumber
@@ -406,7 +406,7 @@ public class Agent {
    /**
     * Method to get the first possible city to be visited by the agent.
     *
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @return the first possible city (not null) to go in the cities to be visited array
     */
    private City getFirstCityToVisit(){
@@ -427,7 +427,7 @@ public class Agent {
     *
     * Uses the edge of the edges matrix of the AntQ algorithm.
     * When the action choice value is too low (Not a Number) is considered equal to 0.
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @param city the second city of the edge 
     * @return the action choice of the edge
     * @see getCityIndex of AntQ class
@@ -451,7 +451,7 @@ public class Agent {
    /**
     * Method to get the sum of action choices of all remaining cities to visit.
     *
-    * @author Matheus Paixão
+    * @author Matheus Paixao
     * @return the sum of action choices of all remaining cities to visit.
     * @see getActionChoice
     */

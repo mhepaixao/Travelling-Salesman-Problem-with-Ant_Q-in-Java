@@ -1,5 +1,21 @@
+/**
+ * Class that implements the Ant Q algorithm.
+ *
+ * The constants are the initialization parameters of the algorithm.
+ * They are used to calculate the action choice value (delta and beta), 
+ * to update the AQ Value (alfa and gamma), to make a exploration or a exploitation choice (q0) 
+ * and to calculate the reinforcement learning value (w).
+ *
+ * The cities array stores all the cities of the instance.
+ *
+ * The edges matrix stores all the edges of the instance (complete graph).
+ *
+ * The agents array stores the agents, or ants, that are acting in the algorithm.  
+ *
+ * @author Matheus Paixao
+ */
 public class AntQ {
-   //CONSTANTS
+   //constant initialization parameters
    private static final double delta = 1;
    private static final double beta = 2;
    private static final double alfa = 0.1;
@@ -7,77 +23,115 @@ public class AntQ {
    private static final double q0 = 0.9;
    private static final double w = 10.0;
 
-   private static City[] cities;
+   private static City cities[];
 
    private static Edge edges[][];
 
-   private static Agent[] agents;
+   private static Agent agents[];
 
+   /**
+    * Main method, where the Ant Q algorithm is runned.
+    *
+    * totalIterations and iterationsCounter are used to stop the algorithm after some iterations.
+    * iterationBestTour array is the best tour of all agents in a iteration.
+    * globalBestTour array is the best tour of all agents in all iterations.
+    *
+    * @author Matheus Paixao
+    * @param args[0] the number of iterations (optional)
+    * @see init
+    * @see chooseNextCity in Agent class
+    * @see setNextCity in Agent class
+    * @see getNextCity in Agent class
+    * @see addCityToTour in Agent class
+    * @see addInitialCityToCitiesToVisit in Agent class
+    * @see getInitialCity in Agent class
+    * @see getLastTourEdge in Agent class
+    * @see getMaxAQValue
+    * @see updateAQValue
+    * @see loadCitiesToVisit in Agent class
+    * @see setCurrentCity in Agent class
+    * @see removeCityFromCitiesToVisit in Agent class
+    * @see getIterationBestTour
+    * @see clearTour in Agent class
+    * @see updateReinforcementLearningValue
+    * @see clearReinforcementLearningValue
+    * @see calculateTourValue
+    */
    public static void main(String[] args){
       int totalIterations = 0;
       int iterationsCounter = 0;
-      Edge[] iterationBestTour = null; 
-      Edge[] globalBestTour = null; 
+      Edge iterationBestTour[] = null; 
+      Edge globalBestTour[] = null; 
       int hereCounter = 0;
 
       if(args.length > 0){
-         totalIterations = Integer.parseInt(args[0]);
+         totalIterations = Integer.parseInt(args[0]); //the user can pass the number of iterations
       }
       else{
          totalIterations = 200;
       }
 
+      //initialization of the algorithm
       init();
 
       while(iterationsCounter <= totalIterations){
+         //in this step all the agents chooses the next city to move to
+         //when all the agents have choosen the next city, they update the AQ value of the correspondent edge 
          for(int i = 0; i <= cities.length - 1; i++){
+            Agent agent = null;
             City nextCity = null;
 
+            //if the agent didn't visit all the cities yet
             if(i != cities.length - 1){
                for(int j = 0; j <= agents.length - 1; j++){
-                  nextCity = agents[j].chooseNextCity();
-                  agents[j].setNextCity(nextCity);
-                  agents[j].addCityToTour(agents[j].getNextCity());
+                  agent = agents[j];
+                  nextCity = agent.chooseNextCity();
+                  agent.setNextCity(nextCity);
+                  agent.addCityToTour(agent.getNextCity());
+
+                  //if the agent has choosen the last city to visit
                   if(i == cities.length - 2){
-                     agents[j].addInitialCityToCitiesToVisit();
+                     agent.addInitialCityToCitiesToVisit();
                   }
                }
             }
+            //all the agents go back to their initial city
             else{
                for(int j = 0; j <= agents.length - 1; j++){
-                  nextCity = agents[j].getInitialCity();
-                  agents[j].setNextCity(nextCity);
-                  agents[j].addCityToTour(agents[j].getNextCity());
+                  agent = agents[j];
+                  nextCity = agent.getInitialCity();
+                  agent.setNextCity(nextCity);
+                  agent.addCityToTour(agent.getNextCity());
                }
             }
 
+            //all the agents update the AQ value of the last edge added to their tour
             for(int j = 0; j <= agents.length - 1; j++){
-               updateAQValue(agents[j].getLastTourEdge(), getMaxAQValue(agents[j], agents[j].getNextCity()));
+               agent = agents[j];
+               updateAQValue(agent.getLastTourEdge(), getMaxAQValue(agent.getCitiesToVisit(), agent.getNextCity()));
 
+               //if the agents has done the tour
                if(i == cities.length - 1){
-                  agents[j].loadCitiesToVisit();
+                  agent.loadCitiesToVisit(); //prepare the cities to visit array for another tour
                }
-               agents[j].setCurrentCity(agents[j].getNextCity());
-               agents[j].removeCityFromCitiesToVisit(agents[j].getNextCity());
+
+               agent.setCurrentCity(agent.getNextCity()); //move to the next choosed city
+               agent.removeCityFromCitiesToVisit(agent.getCurrentCity()); // remove the current city from the cities to visit
             }
          }
 
          iterationBestTour = getIterationBestTour();
 
+         //all the agents clear their tours
          for(int i = 0; i <= agents.length - 1; i++){
             agents[i].clearTour();
          }
 
+         //in this step is calculated the reinforcement learning value and is updated the AQ value only 
+         //the edges belonging to the iterationBestTour
          for(int i = 0; i <= iterationBestTour.length - 1; i++){
             updateReinforcementLearningValue(iterationBestTour[i], calculateTourValue(iterationBestTour));
-         }
-
-         for(int i = 0; i <= iterationBestTour.length - 1; i++){
             updateAQValue(iterationBestTour[i], 0);
-         }
-
-         for(int i = 0; i <= iterationBestTour.length - 1; i++){
-            clearReinforcementLearningValue(iterationBestTour[i]);
          }
 
          if(iterationsCounter == 0){
@@ -122,6 +176,16 @@ public class AntQ {
       return delta;
    }
 
+   /**
+    * Method to initialize the algorithm.
+    *
+    * @author Matheus Paixao
+    * @see getCitiesList in InstanceReader class
+    * @see createEdges
+    * @see initAQValues
+    * @see getAQ0
+    * @see initAgents
+    */
    private static void init(){
       InstanceReader instanceReader = new InstanceReader();
       cities = instanceReader.getCitiesList();
@@ -132,6 +196,12 @@ public class AntQ {
       initAgents();
    }
 
+   /**
+    * Method to create the edges from each city to each city.
+    *
+    * It's a complete graph.
+    * @author Matheus Paixao
+    */
    private static void createEdges(){
       edges = new Edge[cities.length][cities.length];
 
@@ -142,6 +212,15 @@ public class AntQ {
       }
    }
 
+   /**
+    * Method to get the initial AQ value for all edges.
+    *
+    * The initial AQ value is composed by the average value of the edges and the number of cities.
+    * @author Matheus Paixao
+    * @return the initial AQ value for all edges.
+    * @see getEdgeValue in Edge class
+    * @see getNumberOfEdges
+    */
    private static double getAQ0(){
       double sumOfEdges = 0;
       double averageValueOfEdges = 0;
@@ -156,6 +235,13 @@ public class AntQ {
       return 1 / (averageValueOfEdges * cities.length);
    }
 
+   /**
+    * Method to get the number of existing edges.
+    *
+    * When 'i' is equal to 'j' there is no edge.
+    * @author Matheus Paixao
+    * @return the number of existing edges.
+    */
    private static int getNumberOfEdges(){
       int numberOfEdges = 0;
 
@@ -170,6 +256,14 @@ public class AntQ {
       return numberOfEdges;
    }
 
+   /**
+    * Method to set the initial AQ value for each edge.
+    *
+    * When 'i' is equal to 'j' there is no edge, so the initial AQ value is 0.
+    * @author Matheus Paixao
+    * @param AQ0 the initial AQ value for all edges.
+    * @see setAQValue in Edge class.
+    */
    private static void initAQValues(double AQ0){
       for(int i = 0; i <= edges.length - 1; i++){
          for(int j = 0; j <= edges.length - 1; j++){
@@ -183,6 +277,13 @@ public class AntQ {
       }
    }
 
+   /**
+    * Method to init the agents, or the ants.
+    *
+    * One agent is put in each city of the instance.
+    * @author Matheus Paixao
+    * @see Agent constructor in Agent class.
+    */
    private static void initAgents(){
       agents = new Agent[cities.length]; 
       //agents = new Agent[1]; 
@@ -192,6 +293,14 @@ public class AntQ {
       }
    }
 
+   /**
+    * Method to get the index, in the cities array, of a passed city.
+    * 
+    * @author Matheus Paixao
+    * @param city City to know the index.
+    * @return the index, in the cities array, of the passed city.
+    * @see equals method in City class.
+    */
    public static int getCityIndex(City city){
       int index = cities.length + 1;
 
@@ -205,21 +314,26 @@ public class AntQ {
       return index;
    }
 
-   private static void updateAQValue(Edge edge, double maxAQValue){
-      int city1Index = getCityIndex(edge.getCity1());
-      int city2Index = getCityIndex(edge.getCity2());
-      Edge edgeToUpdate = edges[city1Index][city2Index];
-
-      edgeToUpdate.setAQValue((1 - alfa) * edgeToUpdate.getAQValue() + alfa * (edgeToUpdate.getReinforcementLearningValue() + gamma * maxAQValue));
-   }
-
-   public static double getMaxAQValue(Agent agent, City nextCity){
+   /**
+    * Method to get the max AQ value of the next choosed city.
+    *
+    * The method evaluates the AQ values of all the edges from the next choosed city
+    * to all the cities that the agent didn't visit yet.
+    * @author Matheus Paixao
+    * @param citiesToVisit array of the cities to be visited by the agent
+    * @param nextCity the next choosed city
+    * @return the max AQ value of the next choosed city.
+    * @see getCityIndex.
+    * @see equals method in City class.
+    * @see getAQValue method in Edge class.
+    */
+   public static double getMaxAQValue(City citiesToVisit[], City nextCity){
       double maxAQValue = 0;
       double edgeAQValue = 0;
       int nextCityIndex = getCityIndex(nextCity);
-      City[] citiesToVisit = agent.getCitiesToVisit();
 
       for(int i = 0; i <= citiesToVisit.length - 1; i++){
+         //only evaluate the city if the agent didn't visit it yet and it is different of the next choosed city
          if((citiesToVisit[i] != null) && (!nextCity.equals(citiesToVisit[i]))){
             edgeAQValue = edges[nextCityIndex][getCityIndex(citiesToVisit[i])].getAQValue();
             if(edgeAQValue > maxAQValue){
@@ -228,18 +342,43 @@ public class AntQ {
          }
       }
 
-      //What is the maxAQValue of the penultimate edge?
-      //if(maxAQValue == 0){
-
-      //}
-
       return maxAQValue;
    }
 
+   /**
+    * Method to update the AQ value of the passed edge.
+    *
+    * To update the AQ value of an edge, it's used the reinforcement learning value of the edge
+    * and the max AQ value of the next choosed city.
+    * @author Matheus Paixao
+    * @param edge the edge to update.
+    * @param maxAQValue the max AQ value of the next choosed city.
+    * @see getCityIndex.
+    * @see getAQValue in Edge class.
+    * @see getReinforcementLearningValue in Edge class.
+    * @see setAQValue in Edge class.
+    */
+   private static void updateAQValue(Edge edge, double maxAQValue){
+      int city1Index = getCityIndex(edge.getCity1());
+      int city2Index = getCityIndex(edge.getCity2());
+      Edge edgeToUpdate = edges[city1Index][city2Index];
+
+      edgeToUpdate.setAQValue((1 - alfa) * edgeToUpdate.getAQValue() + alfa * (edgeToUpdate.getReinforcementLearningValue() + gamma * maxAQValue));
+   }
+
+   /**
+    * Method to get the best tour, of all agents, of an iteration.
+    *
+    * It's used an auxiliary array to create a new array with the same elements. 
+    * @author Matheus Paixao
+    * @return the iteration best tour
+    * @see getTour in Agent class
+    * @see calculateTourValue
+    */
    private static Edge[] getIterationBestTour(){
-      Edge[] iterationBestTourTemp = agents[0].getTour();
-      Edge[] iterationBestTour = new Edge[iterationBestTourTemp.length];
-      Edge[] tour = null;
+      Edge iterationBestTourTemp[] = agents[0].getTour();
+      Edge iterationBestTour[] = new Edge[iterationBestTourTemp.length];
+      Edge tour[] = null;
       double iterationBestTourValue = calculateTourValue(iterationBestTourTemp);
       double tourValue = 0;
 
@@ -259,6 +398,16 @@ public class AntQ {
       return iterationBestTour;
    }
 
+   /**
+    * Method to update the reinforcement learning value of an edge.
+    *
+    * To update the reinforcement learning value is used the initialization parameter 'w'
+    * and the value of the iteration best tour
+    * @author Matheus Paixao
+    * @param edge the edge to update the reinforcement learning value
+    * @param tourValue the value of the iteration best tour
+    * @see setReinforcementLearningValue in Edge class
+    */
    private static void updateReinforcementLearningValue(Edge edge, double tourValue){
       int city1Index = getCityIndex(edge.getCity1());
       int city2Index = getCityIndex(edge.getCity2());
@@ -266,13 +415,14 @@ public class AntQ {
       edges[city1Index][city2Index].setReinforcementLearningValue(w / tourValue);
    }
 
-   private static void clearReinforcementLearningValue(Edge edge){
-      int city1Index = getCityIndex(edge.getCity1());
-      int city2Index = getCityIndex(edge.getCity2());
-
-      edges[city1Index][city2Index].setReinforcementLearningValue(0);
-   }
-
+   /**
+    * Method to calculate the value of a tour.
+    *
+    * @author Matheus Paixao
+    * @param tour the tour to calculate the value
+    * @return the value of the tour
+    * @see getEdgeValue in Edge class
+    */
    private static double calculateTourValue(Edge[] tour){
       double tourValue = 0;
 
