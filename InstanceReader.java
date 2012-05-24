@@ -18,10 +18,61 @@ import java.util.ArrayList;
  */
 public class InstanceReader extends JFrame {
    private String instanceType;
-   private Pattern pattern;
+   private File instance;
+   private Matcher twoLettersMatcher;
+   private Matcher numbersMatcher;
+   private Matcher spacesMatcher;
 
+   public InstanceReader(){
+      instance = readInstance();
+   }
+
+   private File getInstance(){
+      return this.instance;
+   }
+
+   /**
+    * Method to get the type of the instance.
+    *
+    * In TSP problem the instance can be in matrix format or in cartesian coordinates format.
+    * @author Matheus Paixao
+    * @return the type of the instance.
+    * @see regex package
+    * @see getInstance
+    */
    public String getIntanceType(){
-      return this.instanceType;
+      String instanceType = null;
+      String instanceLine = null;
+      String values[] = null;
+
+      try{
+         BufferedReader reader = new BufferedReader(new FileReader(getInstance()));
+         while(reader.ready()){
+            instanceLine = reader.readLine();
+
+            twoLettersMatcher = Pattern.compile("[a-z][a-z]").matcher(instanceLine) ;
+            numbersMatcher = Pattern.compile("[0-9]").matcher(instanceLine) ;
+
+            //if it isn't a text line and has numbers
+            if((twoLettersMatcher.find() == false) && (numbersMatcher.find() == true)){
+               spacesMatcher = Pattern.compile("\\s{2,}").matcher(instanceLine);
+               instanceLine = spacesMatcher.replaceAll(" ").trim(); //replace all spaces for just one
+
+               values = instanceLine.split(" ");
+               if(values.length > 3){
+                  instanceType = "matrix";
+               }
+               else{
+                  instanceType = "coordinates";
+               }
+            }
+         }
+      }
+      catch(Exception e){
+         System.out.println("Get instance type error");
+      }
+
+      return instanceType;
    }
 
    public void setInstanceType(String instanceType){
@@ -29,15 +80,14 @@ public class InstanceReader extends JFrame {
    }
 
    /**
-    * Method to get the list of nodes.
+    * Method to get the list of cities when the instace is in cartesian coordinates format.
     *
-    * It is used two auxiliary objects. dynamicListOfCities is an ArrayList of Node
-    * and is used to create the nodes in a dynamic form. The AntQ algorithm uses an 
-    * array of nodes but the toArray method of ArrayList class returns an Object array. So 
-    * temporaryCities is used to get the objects of dynamicListOfCities and cast them 
-    * to Node objects.
+    * It is used an auxiliary object. dynamicListOfCities is an ArrayList of City
+    * and is used to create the cities in a dynamic form. The AntQ algorithm uses an 
+    * array of cities. So, after create all the cities the dynamicListOfCities is casted
+    * to a simple City array.
     *
-    * The instance file has to be in one of the formats that follows:
+    * The cartesian coordinates have to be in one of the formats that follows:
     * 1) n Xe+P Ye+P, where n is the line number, X is the x cartesian value x*(10^P) and Y is the y cartesian value y*(10^P)  
     * 2) n X Y, where n is the line number, X is the x cartesian value and Y is the y cartesian value  
     * 3) Xe+P Ye+P, where X is the x cartesian value x*(10^P) and Y is the y cartesian value y*(10^P)  
@@ -50,9 +100,7 @@ public class InstanceReader extends JFrame {
     */
    public City[] getCitiesList(){
       City[] cities = null; //array to return
-      Object[] temporaryCities = null; //auxiliary array to get the Object array and cast to Node
       ArrayList<City> dynamicListOfCities = new ArrayList<City>(); 
-
       File instance = getInstance();
 
       if(instance != null){
@@ -60,54 +108,41 @@ public class InstanceReader extends JFrame {
             String instanceLine = null;
             String[] values;
             City city = null;
-            double x = 0;
-            double y = 0;
             int instanceLineCounter = 0; //will serve as a city id
 
             BufferedReader reader = new BufferedReader(new FileReader(instance));
             while(reader.ready()){
                instanceLine = reader.readLine();
 
-               pattern = Pattern.compile("[a-z][a-z]");
-               Matcher twoLettersMatcher = pattern.matcher(instanceLine) ;
-               pattern = Pattern.compile("[0-9]");
-               Matcher numbersMatcher = pattern.matcher(instanceLine) ;
+               Matcher twoLettersMatcher = Pattern.compile("[a-z][a-z]").matcher(instanceLine) ;
+               Matcher numbersMatcher = Pattern.compile("[0-9]").matcher(instanceLine) ;
 
                //if it isn't a text line and has numbers
                if((twoLettersMatcher.find() == false) && (numbersMatcher.find() == true)){
-                  pattern = Pattern.compile("\\s{2,}");
-                  Matcher spacesMatcher = pattern.matcher(instanceLine);
+                  Matcher spacesMatcher = Pattern.compile("\\s{2,}").matcher(instanceLine);
                   instanceLine = spacesMatcher.replaceAll(" ").trim(); //replace all spaces for just one
 
                   values = instanceLine.split(" ");
-                  if(values.length > 3){
-                     //distance matrix format
-                     setInstanceType("matrix");
-                  }
-                  else{
-                     setInstanceType("coordinates");
-
-                     if(values.length == 3){
-                        if(instanceLine.contains("e")){
-                           city = getExpCartesianCity(instanceLineCounter, values[1], values[2]); //format 1
-                        }
-                        else{
-                           city = getCartesianCity(instanceLineCounter, values[1], values[2]); //format 2
-                        }
+                  if(values.length == 3){
+                     if(instanceLine.contains("e")){
+                        city = getExpCartesianCity(instanceLineCounter, values[1], values[2]); //format 1
                      }
                      else{
-                        if(instanceLine.contains("e")){
-                           city = getExpCartesianCity(instanceLineCounter, values[0], values[1]); //format 3
-                        }
-                        else{
-                           city = getCartesianCity(instanceLineCounter, values[0], values[1]); //format 4
-                        }
+                        city = getCartesianCity(instanceLineCounter, values[1], values[2]); //format 2
+                     }
+                  }
+                  else{
+                     if(instanceLine.contains("e")){
+                        city = getExpCartesianCity(instanceLineCounter, values[0], values[1]); //format 3
+                     }
+                     else{
+                        city = getCartesianCity(instanceLineCounter, values[0], values[1]); //format 4
                      }
                   }
 
                   instanceLineCounter++;
                }
-               
+
                if(city != null){
                   dynamicListOfCities.add(city);
                }
@@ -119,10 +154,10 @@ public class InstanceReader extends JFrame {
 
       }
       
-      temporaryCities = dynamicListOfCities.toArray();
-      cities = new City[temporaryCities.length];
+      //cast the dynamicListOfCities to a City array
+      cities = new City[dynamicListOfCities.size()];
       for(int i = 0; i <= cities.length - 1; i++){
-         cities[i] = (City) temporaryCities[i]; //cast the Object array to a City array
+         cities[i] = dynamicListOfCities.get(i);
       }
 
       return cities;
@@ -135,7 +170,7 @@ public class InstanceReader extends JFrame {
     * @author Matheus Paixao
     * @return the instance file.
     */
-   private File getInstance(){
+   private File readInstance(){
       JFileChooser instanceChooser = new JFileChooser();
       File instance = null;
 

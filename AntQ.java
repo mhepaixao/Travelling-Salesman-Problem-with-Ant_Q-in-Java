@@ -188,12 +188,15 @@ public class AntQ {
     */
    private static void init(){
       InstanceReader instanceReader = new InstanceReader();
-      cities = instanceReader.getCitiesList();
       String instanceType = instanceReader.getIntanceType();
 
       if(instanceType == "coordinates"){
-         createEdges();
+         createCartesianCoordinatesEdges(instanceReader.getCitiesList());
       }
+      else if(instanceType == "matrix"){
+         //createMatrixEdges(instanceReader.getEdgesValuesMatrix);
+      }
+
       initAQValues(getAQ0());
 
       initAgents();
@@ -205,7 +208,8 @@ public class AntQ {
     * It's a complete graph.
     * @author Matheus Paixao
     */
-   private static void createEdges(){
+   private static void createCartesianCoordinatesEdges(City citiesList[]){
+      cities = citiesList;
       edges = new Edge[cities.length][cities.length];
 
       for(int i = 0; i <= cities.length - 1; i++){
