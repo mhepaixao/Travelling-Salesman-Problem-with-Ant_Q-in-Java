@@ -102,7 +102,7 @@ public class InstanceReader extends JFrame {
    }
 
    /**
-    * Method to get the list of cities when the instace is in cartesian coordinates format.
+    * Method to get the list of cities when the instance is in cartesian coordinates format.
     *
     * It is used an auxiliary object. dynamicListOfCities is an ArrayList of City
     * and is used to create the cities in a dynamic form. The AntQ algorithm uses an 
@@ -183,71 +183,6 @@ public class InstanceReader extends JFrame {
       return cities;
    }
 
-   public double[][] getEdgesValuesMatrix(){
-      int numberOfCities = getNumberOfCitiesInMatrixFormat();
-      double edgesValuesMatrix[][] = new double[numberOfCities][numberOfCities];
-
-      try{
-         String instanceLine = null;
-         String[] values;
-         int lineIndex = 0;
-
-         BufferedReader reader = new BufferedReader(new FileReader(instance));
-         while(reader.ready()){
-            instanceLine = reader.readLine();
-
-            Matcher twoLettersMatcher = Pattern.compile("[a-z][a-z]").matcher(instanceLine) ;
-            Matcher numbersMatcher = Pattern.compile("[0-9]").matcher(instanceLine) ;
-
-            //if it isn't a text line and has numbers
-            if((twoLettersMatcher.find() == false) && (numbersMatcher.find() == true)){
-               Matcher spacesMatcher = Pattern.compile("\\s{2,}").matcher(instanceLine);
-               instanceLine = spacesMatcher.replaceAll(" ").trim(); //replace all spaces for just one
-
-               values = instanceLine.split(" ");
-               for(int i = 0; i <= values.length - 1; i++){
-                  edgesValuesMatrix[lineIndex][lineIndex + (i + 1)] = Double.parseDouble(values[i]);
-                  edgesValuesMatrix[lineIndex + (i + 1)][lineIndex] = Double.parseDouble(values[i]);
-               }
-
-               lineIndex++;
-            }
-
-         }
-      }
-      catch(Exception e){
-         System.out.println("Error in get edges values matrix");
-      }
-
-      return edgesValuesMatrix;
-   }
-
-   private int getNumberOfCitiesInMatrixFormat(){
-      int numberOfCities = 0;
-
-      try{
-         String instanceLine = null;
-
-         BufferedReader reader = new BufferedReader(new FileReader(instance));
-         while(reader.ready()){
-            instanceLine = reader.readLine();
-
-            Matcher twoLettersMatcher = Pattern.compile("[a-z][a-z]").matcher(instanceLine) ;
-            Matcher numbersMatcher = Pattern.compile("[0-9]").matcher(instanceLine) ;
-
-            //if it isn't a text line and has numbers
-            if((twoLettersMatcher.find() == false) && (numbersMatcher.find() == true)){
-               numberOfCities++;
-            }
-         }
-      }
-      catch(Exception e){
-         System.out.println("Error in get number of cities in matrix format");
-      }
-
-      return numberOfCities + 1;
-   }
-
    /**
     * Method to get the city when the values are in exponencial format.
     *
@@ -283,5 +218,90 @@ public class InstanceReader extends JFrame {
       double y = Double.parseDouble(value2);
 
       return new City(id, x, y);
+   }
+
+   /**
+    * Method to get the edges values matrix when the instance is in the distance matrix format.
+    *
+    * The distance matrix must be in one of the formats that follows:
+    * Let n be the number of cities.
+    * 1) Symmetric matrix, where the first line is A1, A2 to A1, An. And the last line is An-1, An.
+    *
+    * @author Matheus Paixao
+    * @return the edges values matrix
+    * @see getNumberOfCitiesInMatrixFormat
+    */
+   public double[][] getEdgesValuesMatrix(){
+      int numberOfCities = getNumberOfCitiesInMatrixFormat();
+      double edgesValuesMatrix[][] = new double[numberOfCities][numberOfCities];
+
+      try{
+         String instanceLine = null;
+         String[] values;
+         int lineIndex = 0;
+
+         BufferedReader reader = new BufferedReader(new FileReader(instance));
+         while(reader.ready()){
+            instanceLine = reader.readLine();
+
+            Matcher twoLettersMatcher = Pattern.compile("[a-z][a-z]").matcher(instanceLine) ;
+            Matcher numbersMatcher = Pattern.compile("[0-9]").matcher(instanceLine) ;
+
+            //if it isn't a text line and has numbers
+            if((twoLettersMatcher.find() == false) && (numbersMatcher.find() == true)){
+               Matcher spacesMatcher = Pattern.compile("\\s{2,}").matcher(instanceLine);
+               instanceLine = spacesMatcher.replaceAll(" ").trim(); //replace all spaces for just one
+
+               values = instanceLine.split(" ");
+
+               //format 1
+               for(int i = 0; i <= values.length - 1; i++){
+                  edgesValuesMatrix[lineIndex][lineIndex + (i + 1)] = Double.parseDouble(values[i]);
+                  edgesValuesMatrix[lineIndex + (i + 1)][lineIndex] = Double.parseDouble(values[i]);
+               }
+
+               lineIndex++;
+            }
+
+         }
+      }
+      catch(Exception e){
+         System.out.println("Error in get edges values matrix");
+      }
+
+      return edgesValuesMatrix;
+   }
+
+   /**
+    * Method to get the number of cities when the instance is in distance matrix format.
+    *
+    * @author Matheus Paixao
+    * @return the number of cities 
+    */
+   private int getNumberOfCitiesInMatrixFormat(){
+      int numberOfCities = 0;
+
+      try{
+         String instanceLine = null;
+
+         BufferedReader reader = new BufferedReader(new FileReader(instance));
+         while(reader.ready()){
+            instanceLine = reader.readLine();
+
+            Matcher twoLettersMatcher = Pattern.compile("[a-z][a-z]").matcher(instanceLine) ;
+            Matcher numbersMatcher = Pattern.compile("[0-9]").matcher(instanceLine) ;
+
+            //if it isn't a text line and has numbers
+            if((twoLettersMatcher.find() == false) && (numbersMatcher.find() == true)){
+               numberOfCities++;
+            }
+         }
+      }
+      catch(Exception e){
+         System.out.println("Error in get number of cities in matrix format");
+      }
+
+      //in symmetric matrix the last line is the city An-1
+      return numberOfCities + 1;
    }
 }

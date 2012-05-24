@@ -139,6 +139,7 @@ public class Agent {
     * Insert an edge equal to the edge from the AntQ algorihtm. The edge is inserted in the last null position of the tour.
     * @author Matheus Paixao
     * @param edge the edge from the edges matrix of AntQ algorithm to be inserted in the agent's tour.
+    * @see Edge constructor
     */
    private void insertEdge(Edge edge){
       for(int i = 0; i <= tour.length - 1; i++){
