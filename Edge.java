@@ -17,22 +17,36 @@ public class Edge {
    private double reinforcementLearningValue;
 
    /**
-    * Method to create an edge passing two nodes.
+    * Method to create an edge passing two cities.
     *
-    * The edge value and edge heuristic value are calculated only in the creation of the edge.
-    * The AntQ Value and the reinforcement learning value are initiated with 0.
+    * This method calculates the edge value and call the other Edge constructor.
     * @author Matheus Paixao 
     * @param city1 First city of the edge. 
     * @param city2 Second city of the edge. 
     * @see calculateEdgeValue
-    * @see calculateEdgeHeuristicValue
+    * @see Edge other constructor
     */
    public Edge(City city1, City city2){
+      this(city1, city2, calculateEdgeValue(city1, city2));
+   }
+
+   /**
+    * Method to create an edge passing two cities and the edge value.
+    *
+    * The edge heuristic value is calculated only in the creation of the edge.
+    * The AntQ Value and the reinforcement learning value are initiated with 0.
+    * @author Matheus Paixao 
+    * @param city1 First city of the edge. 
+    * @param city2 Second city of the edge. 
+    * @param edgeValue the value of the edge (distance between the two cities)
+    * @see calculateEdgeHeuristicValue
+    */
+   public Edge(City city1, City city2, double edgeValue){
       this.city1 = city1;
       this.city2 = city2;
 
-      edgeValue = calculateEdgeValue();
-      edgeHeuristicValue = calculateEdgeHeuristicValue();
+      this.edgeValue = edgeValue;
+      this.edgeHeuristicValue = calculateEdgeHeuristicValue();
 
       this.AQValue = 0;
 
@@ -99,11 +113,13 @@ public class Edge {
     *
     * The edge value is calculated using the distance between two points equation from analytic geometry.
     * @author Matheus Paixao
-    * @return The edge value (distance between the two nodes).
+    * @param city1 first city of the edge
+    * @param city2 second city of the edge
+    * @return The edge value (distance between the two cities).
     */
-   private double calculateEdgeValue(){
-      return Math.sqrt(Math.pow(getCity1().getX() - getCity2().getX(), 2) + 
-            Math.pow(getCity1().getY() - getCity2().getY(), 2));
+   private static double calculateEdgeValue(City city1, City city2){
+      return Math.sqrt(Math.pow(city1.getX() - city2.getX(), 2) + 
+            Math.pow(city1.getY() - city2.getY(), 2));
    }
 
    /**

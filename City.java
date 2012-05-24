@@ -23,6 +23,19 @@ public class City {
       this.y = y;
    }
 
+   /**
+    * Method to create a city passing only the id.
+    *
+    * The 'x' and 'y' values are set to 0.
+    * @author Matheus Paixao 
+    * @param id id of the city
+    */
+   public City(int id){
+      this.id = id;
+      this.x = 0;
+      this.y = 0;
+   }
+
    private int getId(){
       return this.id;
    }

@@ -17,22 +17,46 @@ import java.util.ArrayList;
  * @author: Matheus Paixao 
  */
 public class InstanceReader extends JFrame {
-   private String instanceType;
    private File instance;
+   private String instanceType;
    private Matcher twoLettersMatcher;
    private Matcher numbersMatcher;
    private Matcher spacesMatcher;
 
    public InstanceReader(){
-      instance = readInstance();
+      this.instance = loadInstance();
+      this.instanceType = readInstanceType();
    }
 
    private File getInstance(){
       return this.instance;
    }
 
+   public String getInstanceType(){
+      return this.instanceType;
+   }
+
    /**
-    * Method to get the type of the instance.
+    * Method to load the instance file.
+    *
+    * Uses a JFileChooser to select the instance file.
+    * @author Matheus Paixao
+    * @return the instance file.
+    */
+   private File loadInstance(){
+      JFileChooser instanceChooser = new JFileChooser();
+      File instance = null;
+
+      Integer choose = instanceChooser.showOpenDialog(this);
+      if (choose.equals(JFileChooser.APPROVE_OPTION)) {
+         instance = instanceChooser.getSelectedFile();
+      }
+
+      return instance;
+   }
+
+   /**
+    * Method to read the type of the instance.
     *
     * In TSP problem the instance can be in matrix format or in cartesian coordinates format.
     * @author Matheus Paixao
@@ -40,7 +64,7 @@ public class InstanceReader extends JFrame {
     * @see regex package
     * @see getInstance
     */
-   public String getIntanceType(){
+   public String readInstanceType(){
       String instanceType = null;
       String instanceLine = null;
       String values[] = null;
@@ -61,9 +85,11 @@ public class InstanceReader extends JFrame {
                values = instanceLine.split(" ");
                if(values.length > 3){
                   instanceType = "matrix";
+                  break;
                }
                else{
                   instanceType = "coordinates";
+                  break;
                }
             }
          }
@@ -73,10 +99,6 @@ public class InstanceReader extends JFrame {
       }
 
       return instanceType;
-   }
-
-   public void setInstanceType(String instanceType){
-      this.instanceType = instanceType;
    }
 
    /**
@@ -103,57 +125,55 @@ public class InstanceReader extends JFrame {
       ArrayList<City> dynamicListOfCities = new ArrayList<City>(); 
       File instance = getInstance();
 
-      if(instance != null){
-         try{
-            String instanceLine = null;
-            String[] values;
-            City city = null;
-            int instanceLineCounter = 0; //will serve as a city id
+      try{
+         String instanceLine = null;
+         String[] values;
+         City city = null;
+         int instanceLineCounter = 0; //will serve as a city id
 
-            BufferedReader reader = new BufferedReader(new FileReader(instance));
-            while(reader.ready()){
-               instanceLine = reader.readLine();
+         BufferedReader reader = new BufferedReader(new FileReader(instance));
+         while(reader.ready()){
+            instanceLine = reader.readLine();
 
-               Matcher twoLettersMatcher = Pattern.compile("[a-z][a-z]").matcher(instanceLine) ;
-               Matcher numbersMatcher = Pattern.compile("[0-9]").matcher(instanceLine) ;
+            Matcher twoLettersMatcher = Pattern.compile("[a-z][a-z]").matcher(instanceLine) ;
+            Matcher numbersMatcher = Pattern.compile("[0-9]").matcher(instanceLine) ;
 
-               //if it isn't a text line and has numbers
-               if((twoLettersMatcher.find() == false) && (numbersMatcher.find() == true)){
-                  Matcher spacesMatcher = Pattern.compile("\\s{2,}").matcher(instanceLine);
-                  instanceLine = spacesMatcher.replaceAll(" ").trim(); //replace all spaces for just one
+            //if it isn't a text line and has numbers
+            if((twoLettersMatcher.find() == false) && (numbersMatcher.find() == true)){
+               Matcher spacesMatcher = Pattern.compile("\\s{2,}").matcher(instanceLine);
+               instanceLine = spacesMatcher.replaceAll(" ").trim(); //replace all spaces for just one
 
-                  values = instanceLine.split(" ");
-                  if(values.length == 3){
-                     if(instanceLine.contains("e")){
-                        city = getExpCartesianCity(instanceLineCounter, values[1], values[2]); //format 1
-                     }
-                     else{
-                        city = getCartesianCity(instanceLineCounter, values[1], values[2]); //format 2
-                     }
+               values = instanceLine.split(" ");
+               if(values.length == 3){
+                  if(instanceLine.contains("e")){
+                     city = getExpCartesianCity(instanceLineCounter, values[1], values[2]); //format 1
                   }
                   else{
-                     if(instanceLine.contains("e")){
-                        city = getExpCartesianCity(instanceLineCounter, values[0], values[1]); //format 3
-                     }
-                     else{
-                        city = getCartesianCity(instanceLineCounter, values[0], values[1]); //format 4
-                     }
+                     city = getCartesianCity(instanceLineCounter, values[1], values[2]); //format 2
                   }
-
-                  instanceLineCounter++;
+               }
+               else{
+                  if(instanceLine.contains("e")){
+                     city = getExpCartesianCity(instanceLineCounter, values[0], values[1]); //format 3
+                  }
+                  else{
+                     city = getCartesianCity(instanceLineCounter, values[0], values[1]); //format 4
+                  }
                }
 
-               if(city != null){
-                  dynamicListOfCities.add(city);
-               }
+               instanceLineCounter++;
+            }
+
+            if(city != null){
+               dynamicListOfCities.add(city);
             }
          }
-         catch(Exception e){
-            e.printStackTrace();
-         }
-
       }
-      
+      catch(Exception e){
+         e.printStackTrace();
+      }
+
+
       //cast the dynamicListOfCities to a City array
       cities = new City[dynamicListOfCities.size()];
       for(int i = 0; i <= cities.length - 1; i++){
@@ -163,23 +183,69 @@ public class InstanceReader extends JFrame {
       return cities;
    }
 
-   /**
-    * Method to get the instance file.
-    *
-    * Uses a JFileChooser to select the instace file.
-    * @author Matheus Paixao
-    * @return the instance file.
-    */
-   private File readInstance(){
-      JFileChooser instanceChooser = new JFileChooser();
-      File instance = null;
+   public double[][] getEdgesValuesMatrix(){
+      int numberOfCities = getNumberOfCitiesInMatrixFormat();
+      double edgesValuesMatrix[][] = new double[numberOfCities][numberOfCities];
 
-      Integer choose = instanceChooser.showOpenDialog(this);
-      if (choose.equals(JFileChooser.APPROVE_OPTION)) {
-         instance = instanceChooser.getSelectedFile();
+      try{
+         String instanceLine = null;
+         String[] values;
+         int lineIndex = 0;
+
+         BufferedReader reader = new BufferedReader(new FileReader(instance));
+         while(reader.ready()){
+            instanceLine = reader.readLine();
+
+            Matcher twoLettersMatcher = Pattern.compile("[a-z][a-z]").matcher(instanceLine) ;
+            Matcher numbersMatcher = Pattern.compile("[0-9]").matcher(instanceLine) ;
+
+            //if it isn't a text line and has numbers
+            if((twoLettersMatcher.find() == false) && (numbersMatcher.find() == true)){
+               Matcher spacesMatcher = Pattern.compile("\\s{2,}").matcher(instanceLine);
+               instanceLine = spacesMatcher.replaceAll(" ").trim(); //replace all spaces for just one
+
+               values = instanceLine.split(" ");
+               for(int i = 0; i <= values.length - 1; i++){
+                  edgesValuesMatrix[lineIndex][lineIndex + (i + 1)] = Double.parseDouble(values[i]);
+                  edgesValuesMatrix[lineIndex + (i + 1)][lineIndex] = Double.parseDouble(values[i]);
+               }
+
+               lineIndex++;
+            }
+
+         }
+      }
+      catch(Exception e){
+         System.out.println("Error in get edges values matrix");
       }
 
-      return instance;
+      return edgesValuesMatrix;
+   }
+
+   private int getNumberOfCitiesInMatrixFormat(){
+      int numberOfCities = 0;
+
+      try{
+         String instanceLine = null;
+
+         BufferedReader reader = new BufferedReader(new FileReader(instance));
+         while(reader.ready()){
+            instanceLine = reader.readLine();
+
+            Matcher twoLettersMatcher = Pattern.compile("[a-z][a-z]").matcher(instanceLine) ;
+            Matcher numbersMatcher = Pattern.compile("[0-9]").matcher(instanceLine) ;
+
+            //if it isn't a text line and has numbers
+            if((twoLettersMatcher.find() == false) && (numbersMatcher.find() == true)){
+               numberOfCities++;
+            }
+         }
+      }
+      catch(Exception e){
+         System.out.println("Error in get number of cities in matrix format");
+      }
+
+      return numberOfCities + 1;
    }
 
    /**

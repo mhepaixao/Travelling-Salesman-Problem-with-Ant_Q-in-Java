@@ -188,13 +188,13 @@ public class AntQ {
     */
    private static void init(){
       InstanceReader instanceReader = new InstanceReader();
-      String instanceType = instanceReader.getIntanceType();
+      String instanceType = instanceReader.getInstanceType();
 
       if(instanceType == "coordinates"){
          createCartesianCoordinatesEdges(instanceReader.getCitiesList());
       }
       else if(instanceType == "matrix"){
-         //createMatrixEdges(instanceReader.getEdgesValuesMatrix);
+         createMatrixEdges(instanceReader.getEdgesValuesMatrix());
       }
 
       initAQValues(getAQ0());
@@ -215,6 +215,21 @@ public class AntQ {
       for(int i = 0; i <= cities.length - 1; i++){
          for(int j = 0; j <= cities.length - 1; j++){
             edges[i][j] = new Edge(cities[i], cities[j]);
+         }
+      }
+   }
+
+   private static void createMatrixEdges(double edgesValuesMatrix[][]){
+      cities = new City[edgesValuesMatrix.length];
+
+      for(int i = 0; i <= edgesValuesMatrix.length - 1; i++){
+         cities[i] = new City(i);
+      }
+
+      edges = new Edge[cities.length][cities.length];
+      for(int i = 0; i <= cities.length - 1; i++){
+         for(int j = 0; j <= cities.length - 1; j++){
+            edges[i][j] = new Edge(cities[i], cities[j], edgesValuesMatrix[i][j]);
          }
       }
    }

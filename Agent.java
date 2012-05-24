@@ -143,7 +143,7 @@ public class Agent {
    private void insertEdge(Edge edge){
       for(int i = 0; i <= tour.length - 1; i++){
          if(tour[i] == null){
-            tour[i] = new Edge(edge.getCity1(), edge.getCity2());
+            tour[i] = new Edge(edge.getCity1(), edge.getCity2(), edge.getEdgeValue());
             break;
          }
       }
