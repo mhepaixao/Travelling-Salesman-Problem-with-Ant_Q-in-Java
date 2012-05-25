@@ -36,7 +36,7 @@ public class City {
       this.y = 0;
    }
 
-   private int getId(){
+   public int getId(){
       return this.id;
    }
 

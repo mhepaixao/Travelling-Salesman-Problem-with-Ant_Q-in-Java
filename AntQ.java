@@ -393,16 +393,7 @@ public class AntQ {
     * @see equals method in City class.
     */
    public static int getCityIndex(City city){
-      int index = cities.length + 1;
-
-      for(int i = 0; i <= cities.length - 1; i++){
-         if(city.equals(cities[i])){
-            index = i;
-            break;
-         }
-      }
-
-      return index;
+      return city.getId();
    }
 
    /**
