@@ -9,6 +9,8 @@
  * The cities array stores all the cities of the instance.
  *
  * The edges matrix stores all the edges of the instance (complete graph).
+ * 
+ * The actionChoices matrix stores the action choices of all edges.
  *
  * The agents array stores the agents, or ants, that are acting in the algorithm.  
  *
@@ -26,6 +28,8 @@ public class AntQ {
    private static City cities[];
 
    private static Edge edges[][];
+
+   public static double actionChoices[][];
 
    private static Agent agents[];
 
@@ -74,7 +78,14 @@ public class AntQ {
       //initialization of the algorithm
       init();
 
+      double initialTime = 0;
+      double finalTime = 0;
+      double iterationTime = 0;
+      double averageIterationTime = 0;
       while(iterationsCounter <= totalIterations){
+         initialTime = System.currentTimeMillis();
+         //update the action choices of all edges
+         updateActionChoices();
          //in this step all the agents chooses the next city to move to
          //when all the agents have choosen the next city, they update the AQ value of the correspondent edge 
          for(int i = 0; i <= cities.length - 1; i++){
@@ -145,9 +156,14 @@ public class AntQ {
             }
          }
 
+         finalTime = System.currentTimeMillis();
+         iterationTime = finalTime - initialTime;
+         System.out.println("time of iteration "+iterationsCounter + ": "+iterationTime);
+         averageIterationTime += iterationTime;
          iterationsCounter++;
       }
-      System.out.println("here counter: " + hereCounter);
+      //System.out.println("here counter: " + hereCounter);
+      System.out.println("Average time of iterations: " + averageIterationTime / iterationsCounter);
       System.out.println("Best tour value: " + calculateTourValue(globalBestTour));
       System.exit(0);
    }
@@ -166,14 +182,6 @@ public class AntQ {
 
    public static double getGamma(){
       return gamma;
-   }
-
-   public static double getBeta(){
-      return beta;
-   }
-
-   public static double getDelta(){
-      return delta;
    }
 
    /**
@@ -197,6 +205,7 @@ public class AntQ {
          createMatrixEdges(instanceReader.getEdgesValuesMatrix());
       }
 
+      actionChoices = new double[edges.length][edges.length];
       initAQValues(getAQ0());
 
       initAgents();
@@ -313,6 +322,66 @@ public class AntQ {
       for(int i = 0; i <= agents.length - 1; i++){
          agents[i] = new Agent(cities[i]);
       }
+   }
+
+   /**
+    * Method to update the action choices of all edges.
+    *
+    * Uses the edges of the edges matrix.
+    * When the action choice value is too low (Not a Number or Infinity) is considered equal to 0.
+    * @author Matheus Paixao
+    * @see Math.pow
+    */
+   private static void updateActionChoices(){
+      Edge edge =  null;
+      double actionChoice = 0;
+
+      for(int i = 0; i <= actionChoices.length - 1; i++){
+         for(int j = 0; j <= actionChoices.length - 1; j++){
+            edge = edges[i][j];
+            if(i != j){
+               actionChoice =  Math.pow(edge.getAQValue(), delta) * Math.pow(edge.getEdgeHeuristicValue(), beta);
+
+               if((Double.isNaN(actionChoice)) || (Double.POSITIVE_INFINITY == actionChoice) || (Double.NEGATIVE_INFINITY == actionChoice)){
+                  actionChoice = 0;
+               }
+
+               actionChoices[i][j] = actionChoice;
+            }
+         }
+      }
+   }
+
+   /**
+    * Method to get the action choice of an edge.
+    *
+    * @author Matheus Paixao
+    * @param city1 the first city of the edge 
+    * @param city2 the second city of the edge 
+    * @return the action choice of the edge
+    * @see getCityIndex of AntQ class
+    */
+   public static double getActionChoice(City city1, City city2){
+      return actionChoices[getCityIndex(city1)][getCityIndex(city2)];
+   }
+
+   /**
+    * Method to get the sum of action choices of all remaining cities to visit of an agent.
+    *
+    * @author Matheus Paixao
+    * @return the sum of action choices of all remaining cities to visit of an agent.
+    * @see getActionChoice
+    */
+   public static double getActionChoiceSum(City currentCity, City citiesToVisit[]){
+      double actionChoiceSum = 0;
+
+      for(int i = 0; i <= citiesToVisit.length - 1; i++){
+         if(citiesToVisit[i] != null){
+            actionChoiceSum += getActionChoice(currentCity, citiesToVisit[i]);
+         }
+      }
+
+      return actionChoiceSum;
    }
 
    /**

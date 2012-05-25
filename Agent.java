@@ -264,7 +264,7 @@ public class Agent {
       for(int i = 0; i <= citiesToVisit.length - 1; i++){
          if(citiesToVisit[i] != null){
             city = citiesToVisit[i];
-            if(getActionChoice(city) > getActionChoice(maxActionChoiceCity)){
+            if(AntQ.getActionChoice(getCurrentCity(), city) > AntQ.getActionChoice(getCurrentCity(), maxActionChoiceCity)){
                maxActionChoiceCity = city;
             }
          }
@@ -341,11 +341,11 @@ public class Agent {
     */
    private double[] getPseudoRandomProportionalProbabilities(){
       double probabilities[] = new double[citiesToVisit.length];
-      double actionChoiceSum = getActionChoiceSum();
+      double actionChoiceSum = AntQ.getActionChoiceSum(getCurrentCity(), citiesToVisit);
 
       for(int i = 0; i <= probabilities.length - 1; i++){
          if(citiesToVisit[i] != null){
-            probabilities[i] = getActionChoice(citiesToVisit[i]) / actionChoiceSum;
+            probabilities[i] = AntQ.getActionChoice(getCurrentCity(), citiesToVisit[i]) / actionChoiceSum;
          }
          else{
             probabilities[i] = 0;
@@ -407,50 +407,5 @@ public class Agent {
       }
 
       return firstCityToVisit;
-   }
-
-   /**
-    * Method to get the action choice of an edge formed by the current city and the passed city.
-    *
-    * Uses the edge of the edges matrix of the AntQ algorithm.
-    * When the action choice value is too low (Not a Number) is considered equal to 0.
-    * @author Matheus Paixao
-    * @param city the second city of the edge 
-    * @return the action choice of the edge
-    * @see getCityIndex of AntQ class
-    * @see Math.pow
-    */
-   private double getActionChoice(City city){
-      Edge edges[][] = AntQ.getEdges();
-      Edge edge = edges[AntQ.getCityIndex(getCurrentCity())][AntQ.getCityIndex(city)];
-      double edgeAQValue = edge.getAQValue();
-      double edgeHeuristicValue = edge.getEdgeHeuristicValue();
-
-      double actionChoice =  Math.pow(edgeAQValue, AntQ.getDelta()) * Math.pow(edgeHeuristicValue, AntQ.getBeta());
-
-      if((Double.isNaN(actionChoice)) || (Double.POSITIVE_INFINITY == actionChoice) || (Double.NEGATIVE_INFINITY == actionChoice)){
-         actionChoice = 0;
-      }
-
-      return actionChoice;
-   }
-   
-   /**
-    * Method to get the sum of action choices of all remaining cities to visit.
-    *
-    * @author Matheus Paixao
-    * @return the sum of action choices of all remaining cities to visit.
-    * @see getActionChoice
-    */
-   private double getActionChoiceSum(){
-      double actionChoiceSum = 0;
-
-      for(int i = 0; i <= citiesToVisit.length - 1; i++){
-         if(citiesToVisit[i] != null){
-            actionChoiceSum += getActionChoice(citiesToVisit[i]);
-         }
-      }
-
-      return actionChoiceSum;
    }
 }
