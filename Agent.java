@@ -341,10 +341,11 @@ public class Agent {
     */
    private double[] getPseudoRandomProportionalProbabilities(){
       double probabilities[] = new double[citiesToVisit.length];
+      double actionChoiceSum = getActionChoiceSum();
 
       for(int i = 0; i <= probabilities.length - 1; i++){
          if(citiesToVisit[i] != null){
-            probabilities[i] = getPseudoRandomProportionalProbability(citiesToVisit[i]);
+            probabilities[i] = getActionChoice(citiesToVisit[i]) / actionChoiceSum;
          }
          else{
             probabilities[i] = 0;
@@ -352,21 +353,6 @@ public class Agent {
       }
 
       return probabilities;
-   }
-
-   /**
-    * Method to get the pseudo random proportional probability of an action.
-    *
-    * The pseudo random proportional probability of an action is computed by the division of its
-    * action choice by the sum of the action choices of all cities possible to be visited.
-    * @author Matheus Paixao
-    * @param city city used to determine the pseudo random proportional probability of the action
-    * @return the pseudo random proportional probability of the action
-    * @see getActionChoice
-    * @see getActionChoiceSum
-    */
-   private double getPseudoRandomProportionalProbability(City city){
-      return getActionChoice(city) / getActionChoiceSum();
    }
 
    /**
@@ -442,7 +428,7 @@ public class Agent {
 
       double actionChoice =  Math.pow(edgeAQValue, AntQ.getDelta()) * Math.pow(edgeHeuristicValue, AntQ.getBeta());
 
-      if(Double.isNaN(actionChoice)){
+      if((Double.isNaN(actionChoice)) || (Double.POSITIVE_INFINITY == actionChoice) || (Double.NEGATIVE_INFINITY == actionChoice)){
          actionChoice = 0;
       }
 
