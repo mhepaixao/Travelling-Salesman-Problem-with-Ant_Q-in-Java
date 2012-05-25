@@ -97,10 +97,9 @@ public class Agent {
     * set the correspondent city in citiesToVisit to null.
     * @author Matheus Paixao
     * @param city the city to be removed from citiesToVisit.
-    * @see getCityIndex in AntQ class.
     */
    public void removeCityFromCitiesToVisit(City city){
-      citiesToVisit[AntQ.getCityIndex(city)] = null;
+      citiesToVisit[city.getIndex()] = null;
    }
 
    /**
@@ -110,11 +109,10 @@ public class Agent {
     * and set the correspondent position of the citiesToVisit with the initial city.
     * It's used when the agent have visited all the nodes and has to go back to the first one.
     * @author Matheus Paixao
-    * @see getCityIndex in AntQ class.
     */
    public void addInitialCityToCitiesToVisit(){
       City initialCity = getInitialCity();
-      citiesToVisit[AntQ.getCityIndex(initialCity)] = initialCity;
+      citiesToVisit[initialCity.getIndex()] = initialCity;
    }
 
    /**
@@ -127,10 +125,7 @@ public class Agent {
     */
    public void addCityToTour(City city){
       Edge[][] edges = AntQ.getEdges();
-      int currentCityIndex = AntQ.getCityIndex(getCurrentCity());
-      int cityIndex = AntQ.getCityIndex(city);
-
-      insertEdge(edges[currentCityIndex][cityIndex]);
+      insertEdge(edges[getCurrentCity().getIndex()][city.getIndex()]);
    }
    
    /**

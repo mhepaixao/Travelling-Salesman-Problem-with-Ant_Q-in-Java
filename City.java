@@ -1,43 +1,43 @@
 /**
  * Class to represent the cities.
  * 
- * It's formed by the id, X and Y value of cartesian coordinates.
+ * It's formed by the index in the cities array of AntQ algorithm, X and Y value of cartesian coordinates.
  * @author: Matheus Paixao 
  */
 public class City {
-   private int id;
+   private int index;
    private double x;
    private double y;
 
    /**
-    * Method to create a city passing the id, X and Y coordinates.
+    * Method to create a city passing the index, X and Y coordinates.
     *
     * @author Matheus Paixao 
-    * @param id id of the city
+    * @param index index of the city
     * @param x X coordinate of the node. 
     * @param y Y coordinate of the node. 
     */
-   public City(int id, double x, double y){
-      this.id = id;
+   public City(int index, double x, double y){
+      this.index = index;
       this.x = x;
       this.y = y;
    }
 
    /**
-    * Method to create a city passing only the id.
+    * Method to create a city passing only the index.
     *
     * The 'x' and 'y' values are set to 0.
     * @author Matheus Paixao 
-    * @param id id of the city
+    * @param index index of the city
     */
-   public City(int id){
-      this.id = id;
+   public City(int index){
+      this.index = index;
       this.x = 0;
       this.y = 0;
    }
 
-   public int getId(){
-      return this.id;
+   public int getIndex(){
+      return this.index;
    }
 
    public double getX(){
@@ -51,7 +51,7 @@ public class City {
    /**
     * Method to compare if a city is equal to other one.
     *
-    * A city is equal to other if they have the same id.
+    * A city is equal to other if they have the same index.
     * @author Matheus Paixao
     * @param city A city to compare.
     * @return true if the cities are equal, false if not.
@@ -60,7 +60,7 @@ public class City {
       boolean result = false;
 
       if(city instanceof City){
-         if(city.getId() == this.getId()){
+         if(city.getIndex() == this.getIndex()){
             result = true;
          }
       }
@@ -75,6 +75,6 @@ public class City {
     * @return The city in String format.
     */
    public String toString(){
-      return getId() + " " + "(" + getX() + " " + getY() + ")";
+      return getIndex() + " " + "(" + getX() + " " + getY() + ")";
    }
 }

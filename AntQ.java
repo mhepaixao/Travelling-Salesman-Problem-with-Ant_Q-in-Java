@@ -359,10 +359,9 @@ public class AntQ {
     * @param city1 the first city of the edge 
     * @param city2 the second city of the edge 
     * @return the action choice of the edge
-    * @see getCityIndex of AntQ class
     */
    public static double getActionChoice(City city1, City city2){
-      return actionChoices[getCityIndex(city1)][getCityIndex(city2)];
+      return actionChoices[city1.getIndex()][city2.getIndex()];
    }
 
    /**
@@ -385,18 +384,6 @@ public class AntQ {
    }
 
    /**
-    * Method to get the index, in the cities array, of a passed city.
-    * 
-    * @author Matheus Paixao
-    * @param city City to know the index.
-    * @return the index, in the cities array, of the passed city.
-    * @see equals method in City class.
-    */
-   public static int getCityIndex(City city){
-      return city.getId();
-   }
-
-   /**
     * Method to get the max AQ value of the next choosed city.
     *
     * The method evaluates the AQ values of all the edges from the next choosed city
@@ -405,19 +392,18 @@ public class AntQ {
     * @param citiesToVisit array of the cities to be visited by the agent
     * @param nextCity the next choosed city
     * @return the max AQ value of the next choosed city.
-    * @see getCityIndex.
     * @see equals method in City class.
     * @see getAQValue method in Edge class.
     */
    public static double getMaxAQValue(City citiesToVisit[], City nextCity){
       double maxAQValue = 0;
       double edgeAQValue = 0;
-      int nextCityIndex = getCityIndex(nextCity);
+      int nextCityIndex = nextCity.getIndex();
 
       for(int i = 0; i <= citiesToVisit.length - 1; i++){
          //only evaluate the city if the agent didn't visit it yet and it is different of the next choosed city
          if((citiesToVisit[i] != null) && (!nextCity.equals(citiesToVisit[i]))){
-            edgeAQValue = edges[nextCityIndex][getCityIndex(citiesToVisit[i])].getAQValue();
+            edgeAQValue = edges[nextCityIndex][citiesToVisit[i].getIndex()].getAQValue();
             if(edgeAQValue > maxAQValue){
                maxAQValue = edgeAQValue;
             }
@@ -435,14 +421,13 @@ public class AntQ {
     * @author Matheus Paixao
     * @param edge the edge to update.
     * @param maxAQValue the max AQ value of the next choosed city.
-    * @see getCityIndex.
     * @see getAQValue in Edge class.
     * @see getReinforcementLearningValue in Edge class.
     * @see setAQValue in Edge class.
     */
    private static void updateAQValue(Edge edge, double maxAQValue){
-      int city1Index = getCityIndex(edge.getCity1());
-      int city2Index = getCityIndex(edge.getCity2());
+      int city1Index = edge.getCity1().getIndex();
+      int city2Index = edge.getCity2().getIndex();
       Edge edgeToUpdate = edges[city1Index][city2Index];
 
       edgeToUpdate.setAQValue((1 - alfa) * edgeToUpdate.getAQValue() + alfa * (edgeToUpdate.getReinforcementLearningValue() + gamma * maxAQValue));
@@ -491,8 +476,8 @@ public class AntQ {
     * @see setReinforcementLearningValue in Edge class
     */
    private static void updateReinforcementLearningValue(Edge edge, double tourValue){
-      int city1Index = getCityIndex(edge.getCity1());
-      int city2Index = getCityIndex(edge.getCity2());
+      int city1Index = edge.getCity1().getIndex();
+      int city2Index = edge.getCity2().getIndex();
 
       edges[city1Index][city2Index].setReinforcementLearningValue(w / tourValue);
    }
