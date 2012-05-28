@@ -57,7 +57,7 @@ public class Agent {
    }
 
    public void setNextCity(City city){
-      this.nextCity = getCorrespondentCity(city);
+      this.nextCity = citiesToVisit[city.getIndex()];
    }
 
    public City getNextCity(){
@@ -69,7 +69,7 @@ public class Agent {
    }
 
    public void setCurrentCity(City currentCity){
-      this.currentCity = getCorrespondentCity(currentCity);
+      this.currentCity = citiesToVisit[currentCity.getIndex()];
    }
 
    public Edge[] getTour(){
@@ -174,28 +174,6 @@ public class Agent {
       for(int i = 0; i <= tour.length - 1; i ++){
          tour[i] = null;
       }
-   }
-
-   /**
-    * Method to get the correspondent of the specified city in agent's cities to visit.
-    *
-    * @author Matheus Paixao
-    * @param city the city to be compared with the cities in agent's cities to be visited.
-    * @return the correspondent city of the passed city in agent's cities to be visited.
-    * @see setNextCity
-    * @see setCurrentCity
-    */
-   private City getCorrespondentCity(City city){
-      City correspondentCity = null;
-
-      for(int i = 0; i <= citiesToVisit.length - 1; i++){
-         if(city.equals(citiesToVisit[i])){
-            correspondentCity = citiesToVisit[i];
-            break;
-         }
-      }
-
-      return correspondentCity;
    }
 
    /**

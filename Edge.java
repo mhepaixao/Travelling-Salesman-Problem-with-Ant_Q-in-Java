@@ -130,7 +130,12 @@ public class Edge {
     * @return The edge heuristic value (inverse of the distance).
     */
    private double calculateEdgeHeuristicValue(){
-      return 1 / getEdgeValue();
+      double heuristicValue = 0;
+      if(getEdgeValue() != 0){
+         heuristicValue = 1 / getEdgeValue();
+      }
+
+      return heuristicValue;
    }
 
    /**
