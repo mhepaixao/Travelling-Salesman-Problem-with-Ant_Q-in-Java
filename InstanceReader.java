@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Class used to read the instance.
@@ -173,6 +174,9 @@ public class InstanceReader extends JFrame {
          e.printStackTrace();
       }
 
+      Collections.sort(dynamicListOfCities);
+      removeDuplicatedCities(dynamicListOfCities);
+      setCitiesIndexes(dynamicListOfCities);
 
       //cast the dynamicListOfCities to a City array
       cities = new City[dynamicListOfCities.size()];
@@ -218,6 +222,43 @@ public class InstanceReader extends JFrame {
       double y = Double.parseDouble(value2);
 
       return new City(id, x, y);
+   }
+
+   /**
+    * Method to delete duplicate cities in the instance.
+    *
+    * The list of cities must be sorted.
+    * @author Matheus Paixao
+    * @param dynamicListOfCities the list of cities to delete duplicated cities.
+    */
+   private void removeDuplicatedCities(ArrayList<City> dynamicListOfCities){
+      City city = null;
+      City nextCity = null;
+
+      for(int i = 0; i <= dynamicListOfCities.size() - 1; i++){
+         if(i != dynamicListOfCities.size() - 1){
+            city = dynamicListOfCities.get(i);
+            nextCity = dynamicListOfCities.get(i + 1);
+
+            if(city.equals(nextCity)){
+               dynamicListOfCities.remove(i);
+            }
+         }
+      }
+   }
+
+   /**
+    * Method to set the index of each city of the list.
+    *
+    * After sort and delete duplicate cities, it's necessary set new indexes.
+    * @author Matheus Paixao
+    * @param dynamicListOfCities the list od cities to set a new index
+    * @see setIndex in City class
+    */
+   private void setCitiesIndexes(ArrayList<City> dynamicListOfCities){
+      for(int i = 0; i <= dynamicListOfCities.size() - 1; i++){
+         dynamicListOfCities.get(i).setIndex(i);
+      }
    }
 
    /**
