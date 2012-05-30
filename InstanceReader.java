@@ -146,20 +146,10 @@ public class InstanceReader extends JFrame {
 
                values = instanceLine.split(" ");
                if(values.length == 3){
-                  if(instanceLine.contains("e")){
-                     city = getExpCartesianCity(instanceLineCounter, values[1], values[2]); //format 1
-                  }
-                  else{
-                     city = getCartesianCity(instanceLineCounter, values[1], values[2]); //format 2
-                  }
+                  city = getCartesianCity(instanceLineCounter, values[1], values[2]); //formats 1 and 2
                }
                else{
-                  if(instanceLine.contains("e")){
-                     city = getExpCartesianCity(instanceLineCounter, values[0], values[1]); //format 3
-                  }
-                  else{
-                     city = getCartesianCity(instanceLineCounter, values[0], values[1]); //format 4
-                  }
+                  city = getCartesianCity(instanceLineCounter, values[0], values[1]); //formats 3 and 4
                }
 
                instanceLineCounter++;
@@ -188,28 +178,7 @@ public class InstanceReader extends JFrame {
    }
 
    /**
-    * Method to get the city when the values are in exponencial format.
-    *
-    * @author Matheus Paixao
-    * @param id the id of the city.
-    * @param value1 the x cartesian value in exponencial format.
-    * @param value2 the y cartesian value in exponencial format.
-    * @return the city with the x and y coordinates.
-    */
-   private City getExpCartesianCity(int id, String value1, String value2){
-      String[]  xValues = value1.split("e+");
-      double x = Double.parseDouble(xValues[0]);
-      double xPower = Double.parseDouble(xValues[1]);
-
-      String[]  yValues = value2.split("e+");
-      double y = Double.parseDouble(yValues[0]);
-      double yPower = Double.parseDouble(yValues[1]);
-
-      return new City(id, x * Math.pow(10, xPower), y * Math.pow(10, yPower));
-   }
-
-   /**
-    * Method to get the city when the values are just in String format.
+    * Method to get the city when the values are in String format.
     *
     * @author Matheus Paixao
     * @param id the id of the city.
