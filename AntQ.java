@@ -62,9 +62,23 @@ public class AntQ {
     * @see calculateTourValue
     */
    public static void main(String[] args){
-      int totalIterations = 0;
+      //algorithm variables:
+
+      int totalIterations = 0; //number of iterations to run
       int iterationsCounter = 0;
+      
+      //time variables
+      double initialTime = 0;
+      double finalTime = 0;
+      double iterationTime = 0;
+      double averageIterationTime = 0;
+
+      Agent agent = null;
+      City nextCity = null;
+      double reinforcementLearningValue = 0;
+
       Edge iterationBestTour[] = null; 
+      double iterationBestTourValue = 0;
       Edge globalBestTour[] = null; 
       int hereCounter = 0;
 
@@ -78,10 +92,6 @@ public class AntQ {
       //initialization of the algorithm
       init();
 
-      double initialTime = 0;
-      double finalTime = 0;
-      double iterationTime = 0;
-      double averageIterationTime = 0;
       while(iterationsCounter <= totalIterations){
          initialTime = System.currentTimeMillis();
          //update the action choices of all edges
@@ -89,9 +99,6 @@ public class AntQ {
          //in this step all the agents chooses the next city to move to
          //when all the agents have choosen the next city, they update the AQ value of the correspondent edge 
          for(int i = 0; i <= cities.length - 1; i++){
-            Agent agent = null;
-            City nextCity = null;
-
             //if the agent didn't visit all the cities yet
             if(i != cities.length - 1){
                for(int j = 0; j <= agents.length - 1; j++){
@@ -119,7 +126,7 @@ public class AntQ {
             //all the agents update the AQ value of the last edge added to their tour
             for(int j = 0; j <= agents.length - 1; j++){
                agent = agents[j];
-               updateAQValue(agent.getLastTourEdge(), getMaxAQValue(agent.getCitiesToVisit(), agent.getNextCity()));
+               updateAQValue(agent.getLastTourEdge(), 0, getMaxAQValue(agent.getCitiesToVisit(), agent.getNextCity()));
 
                //if the agents has done the tour
                if(i == cities.length - 1){
@@ -132,6 +139,7 @@ public class AntQ {
          }
 
          iterationBestTour = getIterationBestTour();
+         iterationBestTourValue = calculateTourValue(iterationBestTour);
 
          //all the agents clear their tours
          for(int i = 0; i <= agents.length - 1; i++){
@@ -140,16 +148,16 @@ public class AntQ {
 
          //in this step is calculated the reinforcement learning value and is updated the AQ value only 
          //the edges belonging to the iterationBestTour
+         reinforcementLearningValue = w / iterationBestTourValue;
          for(int i = 0; i <= iterationBestTour.length - 1; i++){
-            updateReinforcementLearningValue(iterationBestTour[i], calculateTourValue(iterationBestTour));
-            updateAQValue(iterationBestTour[i], 0);
+            updateAQValue(iterationBestTour[i], reinforcementLearningValue, 0);
          }
 
          if(iterationsCounter == 0){
             globalBestTour = iterationBestTour;
          }
          else{
-            if(calculateTourValue(iterationBestTour) < calculateTourValue(globalBestTour)){
+            if(iterationBestTourValue < calculateTourValue(globalBestTour)){
                System.out.println("found best tour");
                hereCounter++;
                globalBestTour = iterationBestTour;
@@ -198,12 +206,16 @@ public class AntQ {
       InstanceReader instanceReader = new InstanceReader();
       String instanceType = instanceReader.getInstanceType();
 
+      System.out.println("memory before edges");
+      printUsedMemory();
       if(instanceType == "coordinates"){
          createCartesianCoordinatesEdges(instanceReader.getCitiesList());
       }
       else if(instanceType == "matrix"){
          createMatrixEdges(instanceReader.getEdgesValuesMatrix());
       }
+      System.out.println("memory after edges");
+      printUsedMemory();
 
       actionChoices = new double[edges.length][edges.length];
       initAQValues(getAQ0());
@@ -319,9 +331,13 @@ public class AntQ {
       agents = new Agent[cities.length]; 
       //agents = new Agent[1]; 
 
+      System.out.println("memory before agents");
+      printUsedMemory();
       for(int i = 0; i <= agents.length - 1; i++){
          agents[i] = new Agent(cities[i]);
       }
+      System.out.println("memory after agents");
+      printUsedMemory();
    }
 
    /**
@@ -420,17 +436,18 @@ public class AntQ {
     * and the max AQ value of the next choosed city.
     * @author Matheus Paixao
     * @param edge the edge to update.
+    * @param reinforcementLearningValue the reinforcement learning value of the edge.
     * @param maxAQValue the max AQ value of the next choosed city.
     * @see getAQValue in Edge class.
     * @see getReinforcementLearningValue in Edge class.
     * @see setAQValue in Edge class.
     */
-   private static void updateAQValue(Edge edge, double maxAQValue){
+   private static void updateAQValue(Edge edge, double reinforcementLearningValue, double maxAQValue){
       int city1Index = edge.getCity1().getIndex();
       int city2Index = edge.getCity2().getIndex();
       Edge edgeToUpdate = edges[city1Index][city2Index];
 
-      edgeToUpdate.setAQValue((1 - alfa) * edgeToUpdate.getAQValue() + alfa * (edgeToUpdate.getReinforcementLearningValue() + gamma * maxAQValue));
+      edgeToUpdate.setAQValue((1 - alfa) * edgeToUpdate.getAQValue() + alfa * (reinforcementLearningValue + gamma * maxAQValue));
    }
 
    /**
@@ -466,23 +483,6 @@ public class AntQ {
    }
 
    /**
-    * Method to update the reinforcement learning value of an edge.
-    *
-    * To update the reinforcement learning value is used the initialization parameter 'w'
-    * and the value of the iteration best tour
-    * @author Matheus Paixao
-    * @param edge the edge to update the reinforcement learning value
-    * @param tourValue the value of the iteration best tour
-    * @see setReinforcementLearningValue in Edge class
-    */
-   private static void updateReinforcementLearningValue(Edge edge, double tourValue){
-      int city1Index = edge.getCity1().getIndex();
-      int city2Index = edge.getCity2().getIndex();
-
-      edges[city1Index][city2Index].setReinforcementLearningValue(w / tourValue);
-   }
-
-   /**
     * Method to calculate the value of a tour.
     *
     * @author Matheus Paixao
@@ -498,5 +498,13 @@ public class AntQ {
       }
 
       return tourValue;
+   }
+
+   private static void printUsedMemory(){
+      double mb = 1024 * 1024;
+      Runtime runtime = Runtime.getRuntime();
+
+      System.out.println("used memory: "+(runtime.totalMemory() - runtime.freeMemory()) / mb + " MegaBytes");
+      System.out.println("==========================================================");
    }
 }

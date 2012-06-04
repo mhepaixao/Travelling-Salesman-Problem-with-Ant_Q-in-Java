@@ -12,9 +12,7 @@ public class Edge {
    private City city1;
    private City city2;
    private double edgeValue;
-   private double edgeHeuristicValue;
    private double AQValue;
-   private double reinforcementLearningValue;
 
    /**
     * Method to create an edge passing two cities.
@@ -46,11 +44,8 @@ public class Edge {
       this.city2 = city2;
 
       this.edgeValue = edgeValue;
-      this.edgeHeuristicValue = calculateEdgeHeuristicValue();
 
       this.AQValue = 0;
-
-      this.reinforcementLearningValue = 0;
    }
 
    public City getCity1(){
@@ -66,7 +61,7 @@ public class Edge {
    }
 
    public double getEdgeHeuristicValue(){
-      return this.edgeHeuristicValue;
+      return 1 / getEdgeValue();
    }
 
    public double getAQValue(){
@@ -75,14 +70,6 @@ public class Edge {
 
    public void setAQValue(double AQValue){
       this.AQValue = AQValue;
-   }
-
-   public double getReinforcementLearningValue(){
-      return this.reinforcementLearningValue;
-   }
-
-   public void setReinforcementLearningValue(double reinforcementLearningValue){
-      this.reinforcementLearningValue = reinforcementLearningValue;
    }
 
    /**
@@ -120,22 +107,6 @@ public class Edge {
    private static double calculateEdgeValue(City city1, City city2){
       return Math.sqrt(Math.pow(city1.getX() - city2.getX(), 2) + 
             Math.pow(city1.getY() - city2.getY(), 2));
-   }
-
-   /**
-    * Method to calculate the heuristic value of an edge.
-    *
-    * In TSP problem the heuristic value is the inverse of the edge value (distance).
-    * @author Matheus Paixao
-    * @return The edge heuristic value (inverse of the distance).
-    */
-   private double calculateEdgeHeuristicValue(){
-      double heuristicValue = 0;
-      if(getEdgeValue() != 0){
-         heuristicValue = 1 / getEdgeValue();
-      }
-
-      return heuristicValue;
    }
 
    /**
