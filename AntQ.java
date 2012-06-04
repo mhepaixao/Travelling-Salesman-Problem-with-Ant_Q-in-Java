@@ -234,6 +234,7 @@ public class AntQ {
       edges = new Edge[cities.length][cities.length];
 
       for(int i = 0; i <= cities.length - 1; i++){
+         System.out.println("line "+i);
          for(int j = 0; j <= cities.length - 1; j++){
             edges[i][j] = new Edge(cities[i], cities[j]);
          }
@@ -335,6 +336,7 @@ public class AntQ {
       printUsedMemory();
       for(int i = 0; i <= agents.length - 1; i++){
          agents[i] = new Agent(cities[i]);
+         System.out.println("agent "+i);
       }
       System.out.println("memory after agents");
       printUsedMemory();
